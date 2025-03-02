@@ -44,8 +44,8 @@ for i in range(4):  # Placeholder for 4 shops
             f"""
             <div class="card">
                 <img src="https://picsum.photos/400/500" alt="Shop Image">
-                <h4>Shop {i+1}</h4>
-                <p>{i * 1000 + 3000} Sales</p>
+                <h4 style="color: #514743;">Shop {i+1}</h4>
+                <p style="color: #514743;">{i * 1000 + 3000} Sales</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -63,8 +63,8 @@ for i in range(4):  # Placeholder for 4 flowers
             f"""
             <div class="card">
                 <img src="https://picsum.photos/400/500" alt="Flower Image">
-                <h4>Flower {i+1}</h4>
-                <p>{i * 500 + 1000} Sold</p>
+                <h4 style="color: #514743;">Shop {i+1}</h4>
+                <p style="color: #514743;">{i * 1000 + 3000} Sales</p>
             </div>
             """,
             unsafe_allow_html=True,
