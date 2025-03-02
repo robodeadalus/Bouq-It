@@ -7,6 +7,9 @@ search_bar = st.text_input("none", placeholder="Search", label_visibility="hidde
 st.markdown(
     """
     <style>
+        .block-container {
+            
+        }
         .card {
             background-color: white;
             border-radius: 15px;
