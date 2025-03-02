@@ -2,9 +2,10 @@ import streamlit as st
 
 st.markdown("<h1 style='color: #514743;'>HOMEPAGE</h1>", unsafe_allow_html=True)
 
-search_bar = st.text_input("none", placeholder = "Search", label_visibility = "hidden")
+search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
-st.markdown("""
+st.markdown(
+    """
     <style>
         .card {
             background-color: white;
@@ -25,8 +26,12 @@ st.markdown("""
             justify-content: space-around;
         }
     </style>
-""", unsafe_allow_html=True)
-st.markdown("<h3 style='color: #514743;'>Best-Selling Flower Shops</h3>", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
+st.markdown(
+    "<h3 style='color: #514743;'>Best-Selling Flower Shops</h3>", unsafe_allow_html=True
+)
 cols = st.columns(4)  # Adjust the number for layout
 
 
@@ -40,11 +45,13 @@ for i in range(4):  # Placeholder for 4 shops
                 <p>{i * 1000 + 3000} Sales</p>
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
 # Best-Selling Flowers
-st.markdown("<h3 style='color: #514743;'>Best-Selling Flowers</h3>", unsafe_allow_html=True)
+st.markdown(
+    "<h3 style='color: #514743;'>Best-Selling Flowers</h3>", unsafe_allow_html=True
+)
 cols = st.columns(4)
 
 for i in range(4):  # Placeholder for 4 flowers
@@ -57,5 +64,5 @@ for i in range(4):  # Placeholder for 4 flowers
                 <p>{i * 500 + 1000} Sold</p>
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
