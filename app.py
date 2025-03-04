@@ -32,18 +32,42 @@ pages = [
 ]
 
 # ---- NAVIGATION SETUP ----
-st.sidebar.image("assets/Bouq-it.png", use_container_width=True)
+st.sidebar.image(
+    "assets/Bouq-it.png",
+    use_container_width=True,
+)
 pg = st.navigation(pages=pages)
+
+with st.sidebar:
+    login = st.container(key="login")
+    with login:
+        st.button("Login", use_container_width=True)
 
 # ---- RUN NAVIGATION ----
 pg.run()
 
 # ---- SHARED ON ALL views ----
 
+
 custom_css = """
 <style>
-    .stSidebar span {
+    .stSidebar span{
         color: white;
+    }
+    div[data-testid="stSidebarUserContent"] {
+        display: flex;
+        margin-top: auto;
+        padding-bottom: 1.5rem;
+    }
+    .st-key-login {
+        color: white;
+    }
+    div[data-testid="stSidebarContent"] {
+        display: flex;
+        flex-direction: column;
+    }
+    [data-testid="stElementToolbar"]{
+        visibility: hidden;
     }
 </style>
 """
