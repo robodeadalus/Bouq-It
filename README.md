@@ -1,5 +1,5 @@
 # Bouq-It 🌹
-This project was developed by students in Ateneo de Manila University for their CSCI 42 (Introduction to Software Engineering) class.
+This project was developed by students in the Ateneo de Manila University for their CSCI 42 (Introduction to Software Engineering) class.
 
 Bouq-It (pronounced Book-It) is a flower delivery service. 
 It is a play on words of “bouquet” and the act of booking a delivery order. 
@@ -7,7 +7,7 @@ The primary purpose of Bouq-It is to provide a convenient and user-friendly plat
 It aims to support floral shops by offering them an online marketplace while giving customers flexibility in selecting or designing bouquets.
 
 
-# Installation
+# Installation Guide
 1. Make a python virtual environment
     ```
     python -m venv .venv
