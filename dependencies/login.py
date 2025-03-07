@@ -18,26 +18,6 @@ class auth_flow:
             credentials=self.credentials
         )
 
-    def test_insert(self):
-        customer = User(
-            username="test",
-            email="test",
-            password="pass",
-            last_name="User",
-            first_name="Test",
-            middle_name="",
-            contact="09999999999",
-            address="1234",
-            barangay="test",
-            city="test",
-            zipcode="1234",
-        )
-        self.db.add(customer)
-        self.db.commit()
-        print("added")
-        for u in self.db.execute(select(User)):
-            print(u)
-
     def get_credentials(self) -> dict:
         db = self.db
 
@@ -157,6 +137,6 @@ class auth_flow:
             if self.validate_form(form):
                 self.add_user(form)
                 st.rerun()
-    
+
     def logout(self):
         self.authenticator.logout()
