@@ -1,8 +1,8 @@
+import database as db
 import streamlit as st
 import streamlit_authenticator.controllers as stauth
 from database import User
 from sqlalchemy import select
-import database as db
 
 class login_flow:
     def __init__(self, db: db.Session):
@@ -20,10 +20,10 @@ class login_flow:
         users = select(
             User.first_name,
             User.last_name,
-            User.user_username,
-            User.user_email,
-            User.user_password,
-            User.user_salt,
+            User.username,
+            User.email,
+            User.password,
+            User.salt,
         )
 
         for f, l, u, e, p, s in db.execute(users):

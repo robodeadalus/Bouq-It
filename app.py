@@ -1,4 +1,3 @@
-import sqlalchemy
 import streamlit as st
 
 import dependencies.login as sql

@@ -1,6 +1,5 @@
 from typing import Iterable, Optional
 
-import sqlalchemy as sql
 from sqlalchemy import CheckConstraint, Float, ForeignKey, Integer, Sequence, String
 from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -117,9 +116,7 @@ class BouquetFlower(Base):
     )
 
     def __repr__(self) -> str:
-        return (
-            f"Bouquet Flower(Bouquet={self.bouquet_name!r}, Flower={self.flower_name!r})"
-        )
+        return f"Bouquet Flower(Bouquet={self.bouquet_name!r}, Flower={self.flower_name!r})"
 
 
 class OrderFlower(Base):
