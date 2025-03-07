@@ -1,4 +1,32 @@
+import sqlalchemy
 import streamlit as st
+
+import dependencies.login as sql
+
+db = st.connection("postgresql", type="sql")
+st.session_state["db"] = db
+st.session_state["db_session"] = db.session
+authenticator = sql.login_flow(db=st.session_state["db_session"])
+
+if st.button("Test"):
+    with db.session as s:
+        s.add(
+            sql.User(
+                user_username="test1",
+                user_email="test1@email.com",
+                user_password="pass",
+                user_salt="word",
+                last_name="User",
+                first_name="Test",
+                user_address="1234",
+                user_barangay="Tester",
+                user_city="Testing",
+                user_zipcode="Test",
+            )
+        )
+        s.commit()
+        st.rerun()
+
 
 # ---- PAGE SETUP ----
 
@@ -41,7 +69,11 @@ pg = st.navigation(pages=pages)
 with st.sidebar:
     login = st.container(key="login")
     with login:
-        st.button("Login", use_container_width=True)
+        if st.session_state["authentication_status"]:
+            st.write(f"Hello {st.session_state['name']}")
+        else:
+            if st.button("Login", use_container_width=True):
+                authenticator.login()
 
 # ---- RUN NAVIGATION ----
 pg.run()
@@ -68,6 +100,9 @@ custom_css = """
     }
     [data-testid="stElementToolbar"]{
         visibility: hidden;
+    }
+    input[inputmode="text"] {
+        color: white;
     }
 </style>
 """
