@@ -27,15 +27,18 @@ It aims to support floral shops by offering them an online marketplace while giv
     ```
     pip install -r requirements.txt
     ```
-4. Setup database
+4. Run PostgreSQL
     ```
-    \i 'SQL setup.sql'
-    \i 'add data.sql'
+    psql -U postgres
     ```
-5. Setup `secrets.toml` file
+5. Setup database (In Postgres)
+    ```
+    \i 'db.sql'
+    ```
+6. Setup `secrets.toml` file
     - Rename `secrets.toml.example` to `secrets.toml`
     - Add your postgres password in the said file.
-6. Run the app locally
+7. Run the app locally
     ```
     streamlit run app.py
     ```
