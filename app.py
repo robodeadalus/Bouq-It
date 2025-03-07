@@ -1,11 +1,15 @@
 import streamlit as st
 
-import dependencies.login as sql
+import dependencies.login as auth
 
-db = st.connection("postgresql", type="sql")
+db = st.connection(
+    "postgresql",
+    type="sql",
+)
 st.session_state["db"] = db
+db.session.autoflush = True
 st.session_state["db_session"] = db.session
-authenticator = sql.login_flow(db=st.session_state["db_session"])
+authenticator = auth.auth_flow(db=st.session_state["db_session"])
 
 # ---- PAGE SETUP ----
 
@@ -46,13 +50,18 @@ st.sidebar.image(
 pg = st.navigation(pages=pages)
 
 with st.sidebar:
-    login = st.container(key="login")
-    with login:
+    auth = st.container(key="auth")
+    with auth:
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
+            if st.button("Logout", use_container_width=True):
+                authenticator.logout()
+                st.rerun()
         else:
             if st.button("Login", use_container_width=True):
                 authenticator.login()
+            if st.button("Register", use_container_width=True):
+                authenticator.register()
 
 # ---- RUN NAVIGATION ----
 pg.run()
@@ -70,7 +79,7 @@ custom_css = """
         margin-top: auto;
         padding-bottom: 1.5rem;
     }
-    .st-key-login {
+    .st-key-auth {
         color: white;
     }
     div[data-testid="stSidebarContent"] {
@@ -80,8 +89,11 @@ custom_css = """
     [data-testid="stElementToolbar"]{
         visibility: hidden;
     }
-    input[inputmode="text"] {
+    [data-testid="stTextInputRootElement"] input{
         color: white;
+    }
+    [data-testid="stTextInputRootElement"] button{
+    color: white;
     }
 </style>
 """

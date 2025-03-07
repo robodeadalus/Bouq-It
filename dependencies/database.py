@@ -2,7 +2,7 @@ from typing import Iterable, Optional
 
 from sqlalchemy import CheckConstraint, Float, ForeignKey, Integer, Sequence, String
 from sqlalchemy.dialects.postgresql import TEXT
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -23,10 +23,10 @@ class User(Base):
     )
     email: Mapped[str] = mapped_column(String(255))
     password: Mapped[str] = mapped_column(String(255))
-    salt: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     first_name: Mapped[str] = mapped_column(String(255))
     middle_name: Mapped[Optional[str]]
+    contact: Mapped[str] = mapped_column(String(255))
     address: Mapped[str] = mapped_column(String(255))
     barangay: Mapped[str] = mapped_column(String(255))
     city: Mapped[str] = mapped_column(String(255))
