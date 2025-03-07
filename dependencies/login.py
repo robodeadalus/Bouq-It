@@ -1,40 +1,11 @@
-from typing import Iterable, Optional
-
-import sqlalchemy as sql
 import streamlit as st
 import streamlit_authenticator.controllers as stauth
-from sqlalchemy import Sequence, String, select
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session, exc, mapped_column
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-class User(Base):
-    __tablename__ = "customers"
-
-    user_id: Mapped[int] = mapped_column(
-        Sequence("customers_user_id_seq"), primary_key=True, unique=True
-    )
-    user_username: Mapped[str] = mapped_column(String(255), unique=True)
-    user_email: Mapped[str] = mapped_column(String(255))
-    user_password: Mapped[str] = mapped_column(String(255))
-    user_salt: Mapped[str] = mapped_column(String(255))
-    last_name: Mapped[str] = mapped_column(String(255))
-    first_name: Mapped[str] = mapped_column(String(255))
-    middle_name: Mapped[Optional[str]]
-    user_address: Mapped[str] = mapped_column(String(255))
-    user_barangay: Mapped[str] = mapped_column(String(255))
-    user_city: Mapped[str] = mapped_column(String(255))
-    user_zipcode: Mapped[str] = mapped_column(String(255))
-
-    def __repr__(self) -> str:
-        return f"User(id={self.user_id!r})"
-
+from database import User
+from sqlalchemy import select
+import database as db
 
 class login_flow:
-    def __init__(self, db: Session):
+    def __init__(self, db: db.Session):
         self.db = db
         self.credentials = self.get_credentials()
         self.authenticator = stauth.AuthenticationController(
