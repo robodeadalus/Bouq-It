@@ -8,26 +8,6 @@ st.session_state["db"] = db
 st.session_state["db_session"] = db.session
 authenticator = sql.login_flow(db=st.session_state["db_session"])
 
-if st.button("Test"):
-    with db.session as s:
-        s.add(
-            sql.User(
-                user_username="test1",
-                user_email="test1@email.com",
-                user_password="pass",
-                user_salt="word",
-                last_name="User",
-                first_name="Test",
-                user_address="1234",
-                user_barangay="Tester",
-                user_city="Testing",
-                user_zipcode="Test",
-            )
-        )
-        s.commit()
-        st.rerun()
-
-
 # ---- PAGE SETUP ----
 
 pages = [
