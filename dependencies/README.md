@@ -4,14 +4,13 @@ Setting up to use the database:
 
     ```python
     from sqlalchemy import select
-    import dependencies.database as db
     from dependencies.database import *
     ```
 
 1. Initialize SQL session
 
     ```python
-    db:Session = st.session_state["db_session"]
+    db:db.Session = st.session_state["db_session"]
     ```
 
 2. How to add to database

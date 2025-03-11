@@ -6,12 +6,11 @@ import streamlit_authenticator.controllers as stauth
 from sqlalchemy import select
 from streamlit_authenticator import Hasher
 
-import dependencies.database as db
 from dependencies.database import *
 
 
 class auth_flow:
-    def __init__(self, db: db.Session):
+    def __init__(self, db: Session):
         self.db = db
         self.credentials = self.get_credentials()
         self.authenticator = stauth.AuthenticationController(
