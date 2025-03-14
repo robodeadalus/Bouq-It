@@ -45,6 +45,10 @@ pages = [
         page="views/checkout.py",
         title="Checkout Page",
     ),
+    St.Page(
+        page="views/mycart.py",
+        title="My Cart"
+    )
 ]
 # ---- NAVIGATION SETUP ----
 st.sidebar.image(
@@ -58,6 +62,9 @@ with st.sidebar:
     with auth:
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
+            if st.button("View Cart", use_container_width=True):
+                st.switch_page("views/viewcart.py")
+                pass
             if st.button("Logout", use_container_width=True):
                 authenticator.logout()
                 st.rerun()
