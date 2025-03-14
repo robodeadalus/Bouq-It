@@ -1,4 +1,6 @@
 import streamlit as st
+from sqlalchemy import select
+from dependencies.database import *
 
 st.title("Order Page")
 
