@@ -2,15 +2,6 @@ import streamlit as st
 
 st.title("Order Page")
 
-# Create three columns with the first one taking most of the space
-empty_space, button1, button2 = st.columns([4, 1, 1])
-
-# Add buttons to the second and third columns
-with button1:
-    st.button("View Cart", key="view cart")
-with button2:
-    st.button("Checkout", key="checkout")
-
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
 #Available Flowers
@@ -32,10 +23,6 @@ custom_css = """
 <style>
     .st-key-available-shop .stColumn{
         background-color: white;
-    }
-    .st-key-view-cart button, .st-key-checkout button {
-        font-weight: bold !important;
-        background-color: white !important;
     }
     .st-key-available-flower [data-testid="stColumn"] {
         background-color: white;
