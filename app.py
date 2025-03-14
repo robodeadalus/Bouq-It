@@ -41,14 +41,14 @@ pages = [
         icon=":material/auto_stories:",
     ),
     # Placeholder for easy access, remove once fully implemented
-    st.Page(
+     st.Page(
         page="views/checkout.py",
         title="Checkout Page",
     ),
-    St.Page(
+    st.Page(
         page="views/mycart.py",
-        title="My Cart"
-    )
+        title="My Cart",
+    ),
 ]
 # ---- NAVIGATION SETUP ----
 st.sidebar.image(
@@ -63,7 +63,7 @@ with st.sidebar:
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
             if st.button("View Cart", use_container_width=True):
-                st.switch_page("views/viewcart.py")
+                st.switch_page("views/mycart.py")
                 pass
             if st.button("Logout", use_container_width=True):
                 authenticator.logout()
