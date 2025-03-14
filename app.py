@@ -40,8 +40,12 @@ pages = [
         title="Language of Flowers",
         icon=":material/auto_stories:",
     ),
+    # Placeholder for easy access, remove once fully implemented
+    st.Page(
+        page="views/checkout.py",
+        title="Checkout Page",
+    ),
 ]
-
 # ---- NAVIGATION SETUP ----
 st.sidebar.image(
     "assets/Bouq-it.png",
