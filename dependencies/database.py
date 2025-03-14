@@ -179,7 +179,10 @@ class Shop(Base):
     city: Mapped[str] = mapped_column(String(255))
     zipcode: Mapped[str] = mapped_column(String(255))
     contact: Mapped[str] = mapped_column(String(255))
-    price: Mapped[float] = mapped_column(Float(2))
+    sales: Mapped[int] = mapped_column(
+        Integer,
+        CheckConstraint("quantity >= 0"),
+    )
 
     def __repr__(self) -> str:
         return f"Shop(id={self.id!r})"
