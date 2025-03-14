@@ -34,6 +34,7 @@ It aims to support floral shops by offering them an online marketplace while giv
 5. Setup database (In Postgres)
     ```
     \i 'db.sql'
+    \i 'data.sql'
     ```
 6. Setup `secrets.toml` file
     - Rename `secrets.toml.example` to `secrets.toml`

@@ -1,3 +1,10 @@
 **/__pycache__/
 **/test.py
 **/secrets.toml
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
