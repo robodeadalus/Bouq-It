@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from dependencies.database import *
 
-db: Session = db_connect()
+db: Session = st.session_state["db"]
 st.title("Homepage")
 
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
