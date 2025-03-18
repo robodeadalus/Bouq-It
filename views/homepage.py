@@ -11,7 +11,7 @@ st.title("Homepage")
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def fetch(url: String):
     data = Image.open(requests.get(url, stream=True).raw)
     return data

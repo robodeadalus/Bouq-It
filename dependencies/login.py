@@ -30,7 +30,7 @@ class auth_flow:
             User.password,
         )
 
-        for f, l, u, e, p in db.execute(users):
+        for f, l, u, e, p in db.execute(users).all():
             credentials["usernames"] |= {
                 u: {
                     "email": e,
@@ -46,6 +46,9 @@ class auth_flow:
 
     def refresh_credentials(self):
         self.credentials = self.get_credentials()
+        self.authenticator = stauth.AuthenticationController(
+            credentials=self.credentials
+        )
 
     def encrypt(self, password: str) -> str:
         return Hasher.hash(password)
@@ -68,7 +71,6 @@ class auth_flow:
         self.db.add(user)
         self.db.commit()
         self.db.close()
-        self.refresh_credentials()
         print("added user to database")
 
     def unique_username(self, username: str) -> bool:
@@ -110,11 +112,11 @@ class auth_flow:
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         if st.button("Submit"):
+            self.refresh_credentials()
             if self.authenticator.login(username=username, password=password):
                 st.rerun()
             else:
                 st.error("Incorrect Credentials")
-            print(st.session_state["authentication_status"])
 
     @st.dialog("Register")
     def register(self):
