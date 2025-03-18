@@ -1,9 +1,18 @@
 from typing import Iterable, Optional
 
+import streamlit as st
 from sqlalchemy import CheckConstraint, Float, ForeignKey, Integer, Sequence, String
 from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
+
+@st.cache_resource
+def db_connect():
+    db = st.connection(
+        "postgresql",
+        type="sql",
+    )
+    return db.session
 
 class Base(DeclarativeBase):
     pass

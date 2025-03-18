@@ -1,15 +1,10 @@
 import streamlit as st
 
 import dependencies.login as auth
+from dependencies.database import *
 
-db = st.connection(
-    "postgresql",
-    type="sql",
-)
-st.session_state["db"] = db
-db.session.autoflush = True
-st.session_state["db_session"] = db.session
-authenticator = auth.auth_flow(db=st.session_state["db_session"])
+st.session_state["db"] = db_connect()
+authenticator = auth.auth_flow(db=st.session_state["db"])
 
 # ---- PAGE SETUP ----
 
@@ -41,7 +36,7 @@ pages = [
         icon=":material/auto_stories:",
     ),
     # Placeholder for easy access, remove once fully implemented
-     st.Page(
+    st.Page(
         page="views/checkout.py",
         title="Checkout Page",
     ),
@@ -64,7 +59,6 @@ with st.sidebar:
             st.write(f"Hello {st.session_state['name']}")
             if st.button("View Cart", use_container_width=True):
                 st.switch_page("views/mycart.py")
-                pass
             if st.button("Logout", use_container_width=True):
                 authenticator.logout()
                 st.rerun()
