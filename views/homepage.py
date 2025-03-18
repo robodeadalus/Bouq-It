@@ -59,7 +59,7 @@ with bestFlower:
             img = fetch("https://picsum.photos/400/500")
             st.image(img)
             st.subheader(flower)
-            st.write(f"Sales: {sales}")
+            st.write(f"Sales: ₱{sales: .2f}")
         i += 1
 
 custom_css = """
