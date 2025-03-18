@@ -72,7 +72,6 @@ with st.sidebar:
                 authenticator.login()
             if st.button("Register", use_container_width=True):
                 authenticator.register()
-                authenticator.refresh_credentials()
 
 # ---- RUN NAVIGATION ----
 pg.run()
