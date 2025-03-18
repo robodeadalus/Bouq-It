@@ -2,9 +2,14 @@ import streamlit as st
 
 import dependencies.login as auth
 from dependencies.database import *
+from dependencies.login import auth_flow
 
-st.session_state["db"] = db_connect()
-authenticator = auth.auth_flow(db=st.session_state["db"])
+if "db" not in st.session_state:
+    st.session_state["db"] = db_connect()
+if "auth" not in st.session_state:
+    st.session_state["auth"] = auth.auth_flow(db=st.session_state["db"])
+else:
+    authenticator: auth_flow = st.session_state["auth"]
 
 # ---- PAGE SETUP ----
 
@@ -67,6 +72,7 @@ with st.sidebar:
                 authenticator.login()
             if st.button("Register", use_container_width=True):
                 authenticator.register()
+                authenticator.refresh_credentials()
 
 # ---- RUN NAVIGATION ----
 pg.run()
