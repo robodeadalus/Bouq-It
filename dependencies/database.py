@@ -90,7 +90,7 @@ class Flower(Base):
 class Bouquet(Base):
     __tablename__ = "bouquets"
 
-    bouquet_name: Mapped[str] = mapped_column(
+    name: Mapped[str] = mapped_column(
         String(255),
         primary_key=True,
         unique=True,
