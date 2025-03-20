@@ -41,11 +41,11 @@ bouquets = st.container(key = "bouquets")
 with bouquets:
     col = st.columns(4, gap="small", border = True)
     i=0
-    for bouquet, meaning in topBouquets:
+    for name, meaning in topBouquets:
         with col[i]:
             img = fetch("https://picsum.photos/400/500")
             st.image(img)
-            st.subheader(bouquet)
+            st.subheader(name)
             st.write(f"{meaning}")
         i += 1
 
@@ -53,21 +53,7 @@ custom_css = """
 <style>
     div[data-testid="stColumn"] {
         display: flex;
-        color: green
-    }
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: white;
-        max-width: 200px;
-        z-index: 1;
-    }
-    .dropdown:hover .dropdown-content {
-        display: block;
+        color: black;
     }
     .desc {
         padding: 10px;
@@ -76,14 +62,13 @@ custom_css = """
     .st-key-flowers .stColumn  {
         background-color: white;
     }
+    .st-key-bouquets .stColumn {
+        background-color: white;
+    }
     .st-key-flowers [data-testid="stHorizontalBlock"] {
         padding: 10px;
         border-radius: 5px;
         transition: background-color 0.3s;
-    }
-    
-    .hover-column:hover {
-        background-color: rgba(0, 0, 0, 0.05);
     }
 </style>
 """
