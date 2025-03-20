@@ -49,7 +49,12 @@ pages = [
         page="views/mycart.py",
         title="My Cart",
     ),
+    st.Page(
+        page="views/myorders.py",
+        title="My Orders",
+    )
 ]
+
 # ---- NAVIGATION SETUP ----
 st.sidebar.image(
     "assets/Bouq-it.png",
