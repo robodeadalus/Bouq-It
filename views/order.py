@@ -25,6 +25,7 @@ query_available_flowers = (
     select(
         Flower.name,
         Flower.price,
+        ShopFlower.quantity,
         Shop.name.label("shop_name")
     )
     .join(ShopFlower, Flower.name == ShopFlower.flower_name)
@@ -36,6 +37,7 @@ query_available_bouquets = (
     select(
         Bouquet.name,
         Bouquet.price,
+        ShopBouquet.quantity,
         Shop.name.label("shop_name")
     )
     .join(ShopBouquet, Bouquet.name == ShopBouquet.bouquet_name)
@@ -64,13 +66,14 @@ with available_flowers:
                     flower_index = row * 4 + col
                     
                     if flower_index < num_flowers:
-                        flower, price, shop_name = all_available_flowers[flower_index]
+                        flower, price, quantity, shop_name = all_available_flowers[flower_index]
                         
                         with cols[col]:
                             img = fetch("https://picsum.photos/400/500")
                             st.image(img)
                             st.subheader(flower)
                             st.write("*" + shop_name + "*")
+                            st.write(f"Available: {quantity}")
                             st.write(f"₱{price:.2f}")
                             
                             if st.button("", icon=":material/add_circle:", key=f"add_{cols[col]}"):
@@ -96,7 +99,7 @@ with available_bouquets:
                     bouquet_index = row * 4 + col
                     
                     if bouquet_index < num_bouquets:
-                        bouquet, price, shop_name = all_available_flowers[flower_index]
+                        bouquet, price, quantity, shop_name = all_available_bouquets[bouquet_index]
                         
                         with cols[col]:
                             img = fetch("https://picsum.photos/400/500")
@@ -104,6 +107,7 @@ with available_bouquets:
                             st.subheader(bouquet)
                             st.write("*" + shop_name + "*")
                             st.write(f"₱{price:.2f}")
+                            st.write(f"Available: {quantity}")
                             
                             if st.button("", icon=":material/add_circle:", key=f"add_{cols[col]}"):
                                 add_to_cart(bouquet, price, shop_name)
@@ -126,6 +130,17 @@ custom_css = """
         background-color: white;
     }
     .st-key-available-flowers button {
+        background-color: white !important;
+        margin-top: -50px !important; 
+        float: right;
+    }
+    .st-key-available-bouquets .stColumn{
+        background-color: white;
+    }
+    .st-key-available-bouquets [data-testid="stColumn"] {
+        background-color: white;
+    }
+    .st-key-available-bouquets button {
         background-color: white !important;
         margin-top: -50px !important; 
         float: right;
