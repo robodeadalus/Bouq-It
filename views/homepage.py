@@ -10,7 +10,8 @@ st.title("Homepage")
 
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
-filter = st.selectbox("Filter by:", ("Shops", "Flowers", "Location"), key = "filters")
+filter = st.selectbox("Filter by:", ("Shops", "Flowers", "Location", 
+    "Price: Ascending", "Price Descending"))
 
 @st.cache_data(show_spinner=False)
 def fetch(url: String):
