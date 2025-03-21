@@ -106,8 +106,8 @@ with available_bouquets:
                             st.image(img)
                             st.subheader(bouquet)
                             st.write("*" + shop_name + "*")
-                            st.write(f"₱{price:.2f}")
                             st.write(f"Available: {quantity}")
+                            st.write(f"₱{price:.2f}")
                             
                             if st.button("", icon=":material/add_circle:", key=f"add_{cols[col]}"):
                                 add_to_cart(bouquet, price, shop_name)
