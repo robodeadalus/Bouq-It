@@ -37,8 +37,9 @@ It aims to support floral shops by offering them an online marketplace while giv
     \i 'data.sql'
     ```
 6. Setup `secrets.toml` file
-    - Rename `secrets.toml.example` to `secrets.toml`
-    - Add your postgres password in the said file.
+    - Locate `secrets.toml.example` 
+    - Change the user and password to your user and password in postgres.
+    - Rename the file to `secrets.toml`
 7. Run the app locally
     ```
     streamlit run app.py
