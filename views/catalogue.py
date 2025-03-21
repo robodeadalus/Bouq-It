@@ -23,10 +23,7 @@ allBouquets = [row[0] for row in db.execute(bouquetName).all()]
 
 allProducts = allFlowers + allBouquets
 
-
 filter = st.multiselect ("Filter By:", options=allProducts)
-
-
 
 @st.cache_data(show_spinner=False)
 def fetch(url: String):
