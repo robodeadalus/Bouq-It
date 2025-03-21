@@ -11,7 +11,6 @@ if "cart" not in st.session_state:
 
 st.title("Order Page")
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
-st.header("Available Flowers")
 
 def add_to_cart(flower_name, price, shop_name):
     st.session_state["cart"].append({"flower": flower_name, "price": price, "shop": shop_name})
@@ -33,8 +32,21 @@ query_available_flowers = (
     .filter(ShopFlower.quantity > 0)
 )
 
-all_available_flowers = db.execute(query_available_flowers).all()
+query_available_bouquets = (
+    select(
+        Bouquet.name,
+        Bouquet.price,
+        Shop.name.label("shop_name")
+    )
+    .join(ShopBouquet, Bouquet.name == ShopBouquet.bouquet_name)
+    .join(Shop, ShopBouquet.shop_id == Shop.id)
+    .filter(ShopBouquet.quantity > 0)
+)
 
+all_available_flowers = db.execute(query_available_flowers).all()
+all_available_bouquets = db.execute(query_available_bouquets).all()
+
+st.header("Available Flowers")
 available_flowers = st.container(key="available flowers")
 
 with available_flowers:
@@ -58,7 +70,7 @@ with available_flowers:
                             img = fetch("https://picsum.photos/400/500")
                             st.image(img)
                             st.subheader(flower)
-                            st.write(shop_name)
+                            st.write("*" + shop_name + "*")
                             st.write(f"₱{price:.2f}")
                             
                             if st.button("", icon=":material/add_circle:", key=f"add_{cols[col]}"):
@@ -67,6 +79,36 @@ with available_flowers:
                 st.info("No flowers available at the moment.")
 
 st.header("Available Bouquets")
+available_bouquets = st.container(key="available bouquets")
+
+with available_bouquets:
+    if all_available_bouquets:
+        num_bouquets = len(all_available_bouquets)
+        num_rows = (num_bouquets + 3) // 4  
+        
+        for row in range(num_rows):
+            cols_in_this_row = min(4, num_bouquets - row * 4)
+            
+            if cols_in_this_row > 0:
+                cols = st.columns(cols_in_this_row, gap="small", border=True)
+                
+                for col in range(cols_in_this_row):
+                    bouquet_index = row * 4 + col
+                    
+                    if bouquet_index < num_bouquets:
+                        bouquet, price, shop_name = all_available_flowers[flower_index]
+                        
+                        with cols[col]:
+                            img = fetch("https://picsum.photos/400/500")
+                            st.image(img)
+                            st.subheader(bouquet)
+                            st.write("*" + shop_name + "*")
+                            st.write(f"₱{price:.2f}")
+                            
+                            if st.button("", icon=":material/add_circle:", key=f"add_{cols[col]}"):
+                                add_to_cart(bouquet, price, shop_name)
+            else:
+                st.info("No bouquets available at the moment.")
 
 st.header("Shopping Cart")
 if st.session_state["cart"]:
