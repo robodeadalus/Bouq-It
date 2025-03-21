@@ -12,7 +12,7 @@ def db_connect():
         "postgresql",
         type="sql",
     )
-    return db.session
+    return db.engine, db.session
 
 class Base(DeclarativeBase):
     pass

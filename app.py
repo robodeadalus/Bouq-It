@@ -4,8 +4,8 @@ import dependencies.login as auth
 from dependencies.database import *
 from dependencies.login import auth_flow
 
-if "db" not in st.session_state:
-    st.session_state["db"] = db_connect()
+if "db" not in st.session_state or "engine" not in st.session_state:
+    st.session_state["engine"], st.session_state["db"] = db_connect()
 if "auth" not in st.session_state:
     st.session_state["auth"] = auth.auth_flow(db=st.session_state["db"])
 else:
@@ -26,6 +26,11 @@ pages = [
         icon=":material/local_florist:",
     ),
     st.Page(
+        page="views/shop_catalogue.py",
+        title="Shop Catalogue",
+        icon=":material/storefront:"
+    ),
+    st.Page(
         page="views/locator.py",
         title="Flower Shop Locator",
         icon=":material/pin_drop:",
@@ -41,6 +46,7 @@ pages = [
         icon=":material/auto_stories:",
     ),
     # Placeholder for easy access, remove once fully implemented
+    st.Page(page="views/custombouquet.py", title="Custom Bouquets"),
     st.Page(
         page="views/checkout.py",
         title="Checkout Page",
