@@ -26,6 +26,11 @@ pages = [
         icon=":material/local_florist:",
     ),
     st.Page(
+        page="views/shop_catalogue.py",
+        title="Shop Catalogue",
+        icon=":material/storefront:"
+    ),
+    st.Page(
         page="views/locator.py",
         title="Flower Shop Locator",
         icon=":material/pin_drop:",
