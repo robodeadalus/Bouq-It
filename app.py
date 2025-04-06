@@ -28,7 +28,7 @@ pages = [
     st.Page(
         page="views/shop_catalogue.py",
         title="Shop Catalogue",
-        icon=":material/storefront:"
+        icon=":material/storefront:",
     ),
     st.Page(
         page="views/locator.py",
@@ -87,16 +87,10 @@ pg.run()
 
 custom_css = """
 <style>
-    .stSidebar span{
-        color: white;
-    }
     div[data-testid="stSidebarUserContent"] {
         display: flex;
         margin-top: auto;
         padding-bottom: 1.5rem;
-    }
-    .st-key-auth {
-        color: white;
     }
     div[data-testid="stSidebarContent"] {
         display: flex;
@@ -104,12 +98,6 @@ custom_css = """
     }
     [data-testid="stElementToolbar"]{
         visibility: hidden;
-    }
-    [data-testid="stTextInputRootElement"] input{
-        color: white;
-    }
-    [data-testid="stTextInputRootElement"] button{
-    color: white;
     }
 </style>
 """
