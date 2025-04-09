@@ -15,47 +15,52 @@ else:
 
 pages = [
     st.Page(
-        page="views/homepage.py",
+        page="pages/homepage.py",
         title="Home Page",
         icon=":material/home:",
         default=True,
     ),
     st.Page(
-        page="views/catalogue.py",
+        page="pages/catalogue.py",
         title="Flower Catalogue",
         icon=":material/local_florist:",
     ),
     st.Page(
-        page="views/shop_catalogue.py",
+        page="pages/shop_catalogue.py",
         title="Shop Catalogue",
         icon=":material/storefront:",
     ),
     st.Page(
-        page="views/locator.py",
+        page="pages/locator.py",
         title="Flower Shop Locator",
         icon=":material/pin_drop:",
     ),
     st.Page(
-        page="views/order.py",
+        page="pages/order.py",
         title="Order Page",
         icon=":material/shopping_cart:",
     ),
     st.Page(
-        page="views/language_of_flowers.py",
+        page="pages/language_of_flowers.py",
         title="Language of Flowers",
         icon=":material/auto_stories:",
     ),
     # Placeholder for easy access, remove once fully implemented
-    st.Page(page="views/custombouquet.py", title="Custom Bouquets"),
+    st.Page(page="pages/custombouquet.py", title="Custom Bouquets"),
     st.Page(
-        page="views/checkout.py",
+        page="pages/checkout.py",
         title="Checkout Page",
     ),
     st.Page(
-        page="views/mycart.py",
+        page="pages/mycart.py",
         title="My Cart",
     ),
+    st.Page(
+        page="pages/shop_detail.py",
+        title="Shop",
+    ),
 ]
+
 # ---- NAVIGATION SETUP ----
 st.sidebar.image(
     "assets/Bouq-it.png",
@@ -69,7 +74,7 @@ with st.sidebar:
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
             if st.button("View Cart", use_container_width=True):
-                st.switch_page("views/mycart.py")
+                st.switch_page("pages/mycart.py")
             if st.button("Logout", use_container_width=True):
                 authenticator.logout()
                 st.rerun()

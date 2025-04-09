@@ -32,8 +32,8 @@ def fetch(url: String):
 
 st.header("Best-Selling Flower Shops")
 
-queryShop = select(Shop.name, Shop.sales).order_by(Shop.sales.desc()).limit(4)
-topFourShops = db.execute(queryShop).all()
+queryShop = select(Shop).order_by(Shop.sales.desc()).limit(4)
+topFourShops: list[Shop] = [s[0] for s in db.execute(queryShop).all()]
 
 bestShop = st.container(
     key="best shop",
@@ -43,12 +43,15 @@ with bestShop:
         len(topFourShops), gap="small", border=True
     )  # Adjust for available shops
     i = 0
-    for shop, sales in topFourShops:
+    for shop in topFourShops:
         with cols[i]:
             img = fetch("https://picsum.photos/400/500")
             st.image(img)  # Replace with actual shop images
-            st.subheader(shop)
-            st.write(f"Sales: {sales}")
+            st.subheader(shop.name)
+            # st.write(f"Sales: {shop.sales}")
+            if st.button(f"View", key=f"shop_{shop.id}"):
+                st.session_state["selected_shop_id"] = shop.id
+                st.switch_page("pages/shop_detail.py")
         i += 1
 
 
