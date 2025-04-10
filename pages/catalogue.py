@@ -4,6 +4,7 @@ from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
+from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 st.title("Flower Catalogue")
@@ -24,12 +25,6 @@ allBouquets = [row[0] for row in db.execute(bouquetName).all()]
 allProducts = allFlowers + allBouquets
 
 filter = st.multiselect("Filter By:", options=allProducts)
-
-
-@st.cache_data(show_spinner=False)
-def fetch(url: String):
-    data = Image.open(requests.get(url, stream=True).raw)
-    return data
 
 
 st.header("Flowers")

@@ -1,9 +1,7 @@
-import requests
-import streamlit as st
-from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
+from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 st.title("Homepage")
@@ -22,13 +20,6 @@ filter = st.selectbox(
         "Occasion",
     ),
 )
-
-
-@st.cache_data(show_spinner=False)
-def fetch(url: String):
-    data = Image.open(requests.get(url, stream=True).raw)
-    return data
-
 
 st.header("Best-Selling Flower Shops")
 
@@ -51,7 +42,7 @@ with bestShop:
             # st.write(f"Sales: {shop.sales}")
             if st.button(f"View", key=f"shop_{shop.id}"):
                 st.session_state["selected_shop_id"] = shop.id
-                st.switch_page("pages/shop_detail.py")
+                st.switch_page("pages/_shop_detail.py")
         i += 1
 
 

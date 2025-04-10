@@ -55,10 +55,6 @@ pages = [
         page="pages/mycart.py",
         title="My Cart",
     ),
-    st.Page(
-        page="pages/shop_detail.py",
-        title="Shop",
-    ),
 ]
 
 # ---- NAVIGATION SETUP ----

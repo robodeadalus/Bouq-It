@@ -4,6 +4,7 @@ from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
+from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 
@@ -19,12 +20,6 @@ def add_to_cart(flower_name, price, shop_name):
         {"flower": flower_name, "price": price, "shop": shop_name}
     )
     st.success(f"Added {flower_name} to cart!")
-
-
-@st.cache_data
-def fetch(url: String):
-    data = Image.open(requests.get(url, stream=True).raw)
-    return data
 
 
 query_available_flowers = (

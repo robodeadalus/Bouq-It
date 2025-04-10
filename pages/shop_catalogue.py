@@ -4,17 +4,12 @@ from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
+from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 st.title("Shop Catalogue")
 
 st.header("Shops")
-
-
-@st.cache_data(show_spinner=False)
-def fetch(url: String):
-    data = Image.open(requests.get(url, stream=True).raw)
-    return data
 
 
 queryShop = select(Shop.name, Shop.address, Shop.barangay, Shop.city)
