@@ -108,11 +108,11 @@ with st.sidebar:
     # Add auth section
     auth = st.container(key="auth")
     with auth:
-        st.markdown("---")
         st.image(
             "assets/Bouq-it.png",
             use_container_width=True,
         )
+        st.markdown("---")
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
             if st.button("View Cart", use_container_width=True):
