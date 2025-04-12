@@ -1,9 +1,10 @@
-import streamlit as st
 import requests
+import streamlit as st
 from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
+from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 st.title("Flower Catalogue")
@@ -23,34 +24,30 @@ allBouquets = [row[0] for row in db.execute(bouquetName).all()]
 
 allProducts = allFlowers + allBouquets
 
-filter = st.multiselect ("Filter By:", options=allProducts)
+filter = st.multiselect("Filter By:", options=allProducts)
 
-@st.cache_data(show_spinner=False)
-def fetch(url: String):
-    data = Image.open(requests.get(url, stream=True).raw)
-    return data
 
 st.header("Flowers")
-flowers = st.container(key = "flowers")
+flowers = st.container(key="flowers")
 
 with flowers:
-    col = st.columns(3, gap="small", border = True)
-    i=0
+    col = st.columns(3, gap="small", border=True)
+    i = 0
     for flower, desc in topFlowers:
         with col[i]:
             img = fetch("https://picsum.photos/400/500")
             st.image(img)
             st.subheader(flower)
             st.write(f"{desc}")
-        i += 1 
+        i += 1
 
 
 st.header("Bouquets")
-bouquets = st.container(key = "bouquets")
+bouquets = st.container(key="bouquets")
 
 with bouquets:
-    col = st.columns(3, gap="small", border = True)
-    i=0
+    col = st.columns(3, gap="small", border=True)
+    i = 0
     for name, meaning in topBouquets:
         with col[i]:
             img = fetch("https://picsum.photos/400/500")
@@ -63,7 +60,6 @@ custom_css = """
 <style>
     div[data-testid="stColumn"] {
         display: flex;
-        color: black;
     }
     .desc {
         padding: 10px;
