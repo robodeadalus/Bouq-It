@@ -30,6 +30,17 @@ filter = st.multiselect("Filter By:", options=allProducts)
 st.header("Flowers")
 flowers = st.container(key="flowers")
 
+@st.dialog("Flower Details")
+def show_flower_details(flower_name):
+    # Query for the specific flower details
+    flower_query = select(Flower).where(Flower.name == flower_name)
+    detailed_flower = db.execute(flower_query).scalars().first()
+    if detailed_flower:
+        st.write(f"**Price:** ₱{detailed_flower.price:.2f}")
+        st.write(f"**Origin:** {detailed_flower.origin}")
+        st.write(f"**Meaning:** {detailed_flower.meaning}")
+        st.write(f"**Description:** {detailed_flower.description}")
+
 with flowers:
     col = st.columns(3, gap="small", border=True)
     i = 0
@@ -39,6 +50,8 @@ with flowers:
             st.image(img)
             st.subheader(flower)
             st.write(f"{desc}")
+            if st.button(f"View", key=f"view_button_{i}", use_container_width=True, type="primary"):
+                show_flower_details(flower)
         i += 1
 
 

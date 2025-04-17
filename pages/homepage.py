@@ -58,6 +58,22 @@ topFlowers: Sequence[OrderFlower] = (
     db.execute(queryFlowers).scalars().all()
 )  # Execute query properly
 
+flower_names = [flower.flower_name for flower in topFlowers]
+detailedFlowers = select(Flower).where(Flower.name.in_(flower_names))
+topFlowerDetails:Sequence[Flower] = (
+    db.execute(detailedFlowers).scalars().all()
+    )
+
+flower_details_dict = {flower.name: flower for flower in topFlowerDetails} 
+@st.dialog("Flower Details")
+def show_flower_details(flower_name):
+    detailed_flower = flower_details_dict.get(flower_name)
+    if detailed_flower:
+            st.write(f"**Price:** ₱{detailed_flower.price:.2f}")
+            st.write(f"**Origin:** {detailed_flower.origin}")
+            st.write(f"**Meaning:** {detailed_flower.meaning}")
+            st.write(f"**Description:** {detailed_flower.description}")
+
 bestFlower = st.container(key="best flower")
 with bestFlower:
     cols = st.columns(
@@ -69,7 +85,9 @@ with bestFlower:
             img = fetch("https://picsum.photos/400/500")
             st.image(img)
             st.subheader(flower.flower_name)
-            st.write(f"Sales: ₱{flower.quantity: .2f}")
+            st.write(f"Sales: {flower.quantity}")
+            if st.button(f"View", key=f"view_button_{i}",use_container_width=True, type="primary"):
+                show_flower_details(flower.flower_name)
         i += 1
 
 custom_css = """
