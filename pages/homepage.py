@@ -8,7 +8,7 @@ st.title("Homepage")
 
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
-filter = st.selectbox(
+selection = st.selectbox(
     "Filter by:",
     (
         "Shops",
