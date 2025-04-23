@@ -9,22 +9,25 @@ from dependencies.helper import fetch
 db: Session = st.session_state["db"]
 st.title("Flower Catalogue")
 
-queryFlower = select(Flower.name, Flower.short_desc).limit(3)
-topFlowers = db.execute(queryFlower).all()
 
-flowerName = select(Flower.name)
-allFlowers = [row[0] for row in db.execute(flowerName).all()]
+#flowerName = select(Flower.name)
+allFlowers = [row[0] for row in db.execute(select(Flower.name)).all()]
 
-
-queryBouquet = select(Bouquet.name, Bouquet.meaning).limit(3)
-topBouquets = db.execute(queryBouquet).all()
-
-bouquetName = select(Bouquet.name)
-allBouquets = [row[0] for row in db.execute(bouquetName).all()]
+# bouquetName = select(Bouquet.name)
+allBouquets = [row[0] for row in db.execute(select(Bouquet.name)).all()]
 
 allProducts = allFlowers + allBouquets
+selected = st.multiselect("Filter By:", options=allProducts)
 
-filter = st.multiselect("Filter By:", options=allProducts)
+if selected:
+    queryFlower = select(Flower.name, Flower.short_desc).where(Flower.name.in_(selected))
+    queryBouquet = select(Bouquet.name, Bouquet.meaning).where(Bouquet.name.in_(selected))
+else:
+    queryFlower = select(Flower.name, Flower.short_desc).limit(3)
+    queryBouquet = select(Bouquet.name, Bouquet.meaning).limit(3)
+
+topFlowers = db.execute(queryFlower).all()
+topBouquets = db.execute(queryBouquet).all()
 
 
 st.header("Flowers")
@@ -41,38 +44,50 @@ def show_flower_details(flower_name):
         st.write(f"**Meaning:** {detailed_flower.meaning}")
         st.write(f"**Description:** {detailed_flower.description}")
 
-with flowers:
-    col = st.columns(3, gap="small", border=True)
-    i = 0
-    for flower, desc in topFlowers:
-        with col[i]:
-            img = fetch("https://picsum.photos/400/500")
-            st.image(img)
-            st.subheader(flower)
-            st.write(f"{desc}")
-            if st.button(f"View", key=f"view_button_{i}", use_container_width=True, type="primary"):
-                show_flower_details(flower)
-        i += 1
+@st.dialog("Bouquet Details")
+def show_bouquet_details(bouquet_name):
+    bouquet_query = select(Bouquet).where(Bouquet.name == bouquet_name)
+    detailed_bouquet = db.execute(bouquet_query).scalars().first()
+    if detailed_bouquet:
+        st.write(f"**Price** ₱{detailed_bouquet.price:.2f}")
+        st.write(f"**Origin:** {detailed_bouquet.origin}")
+        st.write(f"**Meaning:** {detailed_bouquet.meaning}")
+        st.write(f"**Description:** {detailed_bouquet.description}")
 
+with flowers:
+    for i in range (0, len(topFlowers), 3):
+        batch = topFlowers[i:i+3]
+        cols = st.columns(len(batch), gap="small", border = True)
+        for j, (flower, desc) in enumerate(batch): 
+            with cols[j]:
+                img = fetch("https://picsum.photos/400/500")
+                st.image(img)
+                st.subheader(flower)
+                st.write(f"{desc}")
+                if st.button(f"View", key=f"view_button_flower_{i+j}", use_container_width=True, type="primary"):
+                    show_flower_details(flower)
 
 st.header("Bouquets")
 bouquets = st.container(key="bouquets")
 
 with bouquets:
-    col = st.columns(3, gap="small", border=True)
-    i = 0
-    for name, meaning in topBouquets:
-        with col[i]:
-            img = fetch("https://picsum.photos/400/500")
-            st.image(img)
-            st.subheader(name)
-            st.write(f"{meaning}")
-        i += 1
+    for m in range (0, len(topBouquets), 3):
+        batch = topBouquets[m:m+3]
+        cols = st.columns(len(batch), gap="small", border = True)
+        for n, (bouquet, desc) in enumerate(batch): 
+            with cols[n]:
+                img = fetch("https://picsum.photos/400/500")
+                st.image(img)
+                st.subheader(bouquet)
+                st.write(f"{desc}")
+                if st.button(f"View", key=f"view_button_bouquet_{m+n}", use_container_width=True, type= "primary"):
+                    show_bouquet_details(bouquet)
+
 
 custom_css = """
 <style>
     div[data-testid="stColumn"] {
-        display: flex;
+        display: block;
     }
     .desc {
         padding: 10px;
