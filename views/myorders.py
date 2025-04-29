@@ -18,28 +18,29 @@ def fetch(url: String):
 st.header("My Most Recent Orders")
 
 #get the user id
-userID = select(User.id) #.where(User.id = this.id) parang ganun di ko ma figure out to
+userID = select(User.id).where(User.username == st.session_state["username"]) 
+user = db.execute(userID).first()
 
 #get the orders the user has made
-queryOrders = select(Order.id, Order.address, Order.barangay, Order.city).where(Order.ordered_by == userID, Order.ordered_by == User.id) #again, not sure kung gagana to
+queryOrders = select(Order.id, Order.address, Order.barangay, Order.city).where(Order.ordered_by == user, Order.ordered_by == User.id)
 ordersList = db.execute(queryOrders)
 
 #get the details of each order
 #ideally we order this by most recent but we don't have date saved for the orders
-queryFlowerOrders = select(Order.id, OrderFlower.flower_name, OrderFlower.quantity).where(Order.ordered_by == User.id, Order.id == OrderFlower.order_id, User.id == userID)
-queryBouquetOrders = select(Order.id, OrderBouquet.bouquet_name, OrderBouquet.quantity).where(Order.ordered_by == User.id, Order.id == OrderBouquet.order_id, User.id == userID)
-orderDetails = db.execute(queryFlowerOrders).all() + db.execute(queryBouquetOrders).all() #idk if this works like this
+queryFlowerOrders = select(Order.id, OrderFlower.flower_name, OrderFlower.quantity).where(Order.ordered_by == User.id, Order.id == OrderFlower.order_id, User.id == user)
+queryBouquetOrders = select(Order.id, OrderBouquet.bouquet_name, OrderBouquet.quantity).where(Order.ordered_by == User.id, Order.id == OrderBouquet.order_id, User.id == user)
+orderDetails = db.execute(queryFlowerOrders).all() #+ db.execute(queryBouquetOrders).all() #idk if this works like this
 
 myOrders = st.container(key="my orders")
 
 with myOrders:
     cols = st.columns(
-        len(ordersList), gap="small", border=True
+        4, gap="small", border=True
     )
     i = 0
     for id in ordersList:
         with cols[i]:
-            st.subheader(f"Order IDL {id}")
+            st.subheader(f"Order ID: {id}")
             for flower_name, quantity in orderDetails:
                 st.write(f"{flower_name} — {quantity}")
             for bouquet_name, quantity in orderDetails:
