@@ -23,6 +23,7 @@ class auth_flow:
         credentials = {"usernames": {}}
 
         users = select(
+            User.id,
             User.first_name,
             User.last_name,
             User.username,
@@ -30,7 +31,7 @@ class auth_flow:
             User.password,
         )
 
-        for f, l, u, e, p in db.execute(users).all():
+        for i, f, l, u, e, p in db.execute(users).all():
             credentials["usernames"] |= {
                 u: {
                     "email": e,
@@ -39,6 +40,7 @@ class auth_flow:
                     "last_name": l,
                     "logged_in": False,
                     "password": p,
+                    "id": i,
                 }
             }
 
@@ -114,6 +116,8 @@ class auth_flow:
         if st.button("Submit"):
             self.refresh_credentials()
             if self.authenticator.login(username=username, password=password):
+                user_data = self.credentials["usernames"][username]
+                st.session_state.user_id = user_data["id"]
                 st.rerun()
             else:
                 st.error("Incorrect Credentials")

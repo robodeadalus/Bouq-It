@@ -21,9 +21,9 @@ VALUES
 -- Insert flowers
 INSERT INTO flowers (name, description, short_desc, image_link, origin, meaning, price)
 VALUES
-('Rose', 'A classic red rose symbolizing love.', 'Symbol of love.', 'link_to_image', 'France', 'Love, Passion', 150.00),
-('Lily', 'A white lily that represents purity.', 'Represents purity.', 'link_to_image', 'Netherlands', 'Purity, Rebirth', 180.00),
-('Daisy', 'A cheerful daisy flower.', 'Symbol of innocence.', 'link_to_image', 'USA', 'Innocence, Joy', 120.00),
+('Rose', 'A classic red rose symbolizing love.', 'Symbol of love.', 'assets/flowers/rose.jpg', 'France', 'Love, Passion', 150.00),
+('Lily', 'A white lily that represents purity.', 'Represents purity.', 'assets/flowers/lily.jpg', 'Netherlands', 'Purity, Rebirth', 180.00),
+('Daisy', 'A cheerful daisy flower.', 'Symbol of innocence.', 'assets/flowers/tulip.jpg', 'USA', 'Innocence, Joy', 120.00),
 ('Tulip', 'A bright and colorful tulip.', 'Symbol of perfect love.', 'link_to_image', 'Turkey', 'Perfect Love', 200.00),
 ('Sunflower', 'A large sunflower symbolizing warmth.', 'Represents adoration.', 'link_to_image', 'Mexico', 'Adoration, Loyalty', 170.00),
 ('Orchid', 'A rare and exotic orchid.', 'Symbol of luxury.', 'link_to_image', 'Philippines', 'Luxury, Beauty', 250.00);
@@ -31,9 +31,9 @@ VALUES
 -- Insert bouquets
 INSERT INTO bouquets (name, description, short_desc, image_link, origin, meaning, price)
 VALUES
-('Romantic Red', 'A bouquet full of red roses.', 'Passionate love.', 'link_to_image', 'France', 'Love, Romance', 800.00),
-('Pure Elegance', 'A mix of white lilies and orchids.', 'Elegant and pure.', 'link_to_image', 'Netherlands', 'Purity, Grace', 950.00),
-('Sunshine Bliss', 'Sunflowers and daisies combined.', 'A cheerful bouquet.', 'link_to_image', 'Mexico', 'Happiness, Warmth', 750.00),
+('Romantic Red', 'A bouquet full of red roses.', 'Passionate love.', 'bouqets/RomanticRed.jpg', 'France', 'Love, Romance', 800.00),
+('Pure Elegance', 'A mix of white lilies and orchids.', 'Elegant and pure.', 'bouqets/PureElegeance.jpg', 'Netherlands', 'Purity, Grace', 950.00),
+('Sunshine Bliss', 'Sunflowers and daisies combined.', 'A cheerful bouquet.', 'bouqets/SunshineBliss.jpg', 'Mexico', 'Happiness, Warmth', 750.00),
 ('Tulip Dream', 'A bouquet full of colorful tulips.', 'Perfect love bouquet.', 'link_to_image', 'Turkey', 'Love, Perfection', 870.00),
 ('Orchid Beauty', 'A luxurious orchid bouquet.', 'Exotic beauty.', 'link_to_image', 'Philippines', 'Luxury, Beauty', 1200.00),
 ('Daisy Delight', 'A fresh and joyful daisy bouquet.', 'Symbol of happiness.', 'link_to_image', 'USA', 'Joy, Innocence', 650.00);
