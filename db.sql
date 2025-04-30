@@ -108,3 +108,24 @@ CREATE TABLE shop_bouquets (
     FOREIGN KEY (shop_id) REFERENCES shops (id),
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
 );
+
+CREATE TABLE customer_flowers (
+    customer_id INT NOT NULL,
+    flower_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    CHECK (quantity >= 1),
+    PRIMARY KEY (customer_id, flower_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id),
+    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+);
+
+CREATE TABLE customer_bouquets (
+    customer_id INT NOT NULL,
+    bouquet_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    design VARCHAR(255),
+    CHECK (quantity >= 1),
+    PRIMARY KEY (customer_id, bouquet_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id),
+    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+);

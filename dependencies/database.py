@@ -14,6 +14,7 @@ def db_connect():
     )
     return db.engine, db.session
 
+
 class Base(DeclarativeBase):
     pass
 
@@ -103,7 +104,7 @@ class Bouquet(Base):
     price: Mapped[float] = mapped_column(Float(2))
 
     def __repr__(self) -> str:
-        return f"Bouquet(name={self.bouquet_name!r}, price={self.price!r})"
+        return f"Bouquet(name={self.name!r}, price={self.price!r})"
 
 
 class BouquetFlower(Base):
@@ -162,7 +163,7 @@ class OrderBouquet(Base):
     )
     bouquet_name: Mapped[str] = mapped_column(
         String(255),
-        ForeignKey("bouquets.bouquet_name"),
+        ForeignKey("bouquets.name"),
         primary_key=True,
     )
     quantity: Mapped[int] = mapped_column(
@@ -190,7 +191,7 @@ class Shop(Base):
     contact: Mapped[str] = mapped_column(String(255))
     sales: Mapped[int] = mapped_column(
         Integer,
-        CheckConstraint("quantity >= 0"),
+        CheckConstraint("sales >= 0"),
     )
 
     def __repr__(self) -> str:
@@ -239,3 +240,48 @@ class ShopBouquet(Base):
 
     def __repr__(self) -> str:
         return f"Bouquet Shop(Shop ID={self.shop_id!r}, Bouquet={self.bouquet_name!r})"
+
+
+class CustomerFlower(Base):
+    __tablename__ = "customer_flowers"
+
+    customer_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("customers.id"),
+        primary_key=True,
+    )
+    flower_name: Mapped[str] = mapped_column(
+        String(255),
+        ForeignKey("flowers.name"),
+        primary_key=True,
+    )
+    quantity: Mapped[int] = mapped_column(
+        Integer,
+        CheckConstraint("quantity >= 1"),
+    )
+
+    def __repr__(self) -> str:
+        return f"Customer Flower(Customer ID={self.customer_id!r}, Flower={self.flower_name!r}, Qty={self.quantity!r})"
+
+
+class CustomerBouquet(Base):
+    __tablename__ = "customer_bouquets"
+
+    customer_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("customers.id"),
+        primary_key=True,
+    )
+    bouquet_name: Mapped[str] = mapped_column(
+        String(255),
+        ForeignKey("bouquets.name"),
+        primary_key=True,
+    )
+    quantity: Mapped[int] = mapped_column(
+        Integer,
+        CheckConstraint("quantity >= 1"),
+    )
+    design: Mapped[Optional[str]] = mapped_column(String(255))
+
+    def __repr__(self) -> str:
+        return f"Customer Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Qty={self.quantity!r})"
