@@ -22,12 +22,19 @@ query_bouquets = (
 all_flowers = db.execute(query_flowers).all()
 all_bouquets = db.execute(query_bouquets).all()
 
-print(all_flowers)
-
 if search:
     all_flowers = [
         (name, desc, short_desc, origin, meaning)
         for name, desc, short_desc, origin, meaning in all_flowers
+        if search.lower() in name.lower() 
+        or search.lower() in desc.lower()
+        or search.lower() in short_desc.lower()
+        or search.lower() in origin.lower()
+        or search.lower() in meaning.lower()
+        ]
+    all_bouquets = [
+        (name, desc, short_desc, origin, meaning)
+        for name, desc, short_desc, origin, meaning in all_bouquets
         if search.lower() in name.lower() 
         or search.lower() in desc.lower()
         or search.lower() in short_desc.lower()
@@ -49,13 +56,12 @@ with flowers:
             if flower_index < num_flowers:
                 name, desc, short_desc, origin, meaning = all_flowers[flower_index]
                 with col[i]:
-                    # for name, desc, short_desc, origin, meaning in all_flowers:
-                        img = fetch("https://picsum.photos/400/500")
-                        st.image(img)
-                        st.subheader(name)
-                        st.write(f"{meaning}")
-                        st.write(f"{desc}")
-                        st.write(f"{origin}")
+                    img = fetch("https://picsum.photos/400/500")
+                    st.image(img)
+                    st.subheader(name)
+                    st.write(f"{meaning}")
+                    st.write(f"{desc}")
+                    st.write(f"{origin}")
 
 st.header("Bouquets")
 bouquets = st.container(key="bouquets")
