@@ -60,3 +60,53 @@ else:
                 st.write(f"**Meaning:** {flower.meaning}")
                 st.write(f"**Description:** {flower.description}")
                 # You could add an "Add to Cart" button here if needed
+                if "user_id" not in st.session_state:
+                    st.warning("Please login to add items to your cart")
+                else:
+                    max_qty = min(
+                        shop_flower.quantity, 10
+                    )  # Limit to 10 items max per addition
+                    qty = st.number_input(
+                        "Quantity",
+                        min_value=1,
+                        max_value=max_qty,
+                        value=1,
+                        key=f"qty_{flower.name}",
+                    )
+
+                    if st.button("Add to Cart", key=f"add_{flower.name}"):
+                        try:
+                            # Check existing cart item
+                            cart_item = db.execute(
+                                select(CustomerFlower)
+                                .where(
+                                    CustomerFlower.customer_id
+                                    == st.session_state.user_id
+                                )
+                                .where(CustomerFlower.flower_name == flower.name)
+                            ).scalar_one_or_none()
+
+                            if cart_item:
+                                # Update existing quantity
+                                new_qty = cart_item.quantity + qty
+                                if new_qty > shop_flower.quantity:
+                                    st.error("Not enough stock for this quantity")
+                                else:
+                                    cart_item.quantity = new_qty
+                                    db.commit()
+                            else:
+                                # Add new item to cart
+                                new_item = CustomerFlower(
+                                    customer_id=st.session_state.user_id,
+                                    flower_name=flower.name,
+                                    quantity=qty,
+                                )
+                                db.add(new_item)
+                                db.commit()
+
+                        except Exception as e:
+                            db.rollback()
+                            st.error(f"Error updating cart: {str(e)}")
+
+                        finally:
+                            st.toast(f"Added {qty} {flower.name} to cart")
