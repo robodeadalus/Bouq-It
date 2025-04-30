@@ -20,10 +20,10 @@ allProducts = allFlowers + allBouquets
 selected = st.multiselect("Filter By:", options=allProducts)
 
 if selected:
-    queryFlower = select(Flower.name, Flower.short_desc).where(Flower.name.in_(selected))
+    queryFlower = select(Flower.name, Flower.short_desc, Flower.image_link).where(Flower.name.in_(selected))
     queryBouquet = select(Bouquet.name, Bouquet.meaning).where(Bouquet.name.in_(selected))
 else:
-    queryFlower = select(Flower.name, Flower.short_desc).limit(3)
+    queryFlower = select(Flower.name, Flower.short_desc, Flower.image_link).limit(3)
     queryBouquet = select(Bouquet.name, Bouquet.meaning).limit(3)
 
 topFlowers = db.execute(queryFlower).all()
@@ -58,10 +58,9 @@ with flowers:
     for i in range (0, len(topFlowers), 3):
         batch = topFlowers[i:i+3]
         cols = st.columns(len(batch), gap="small", border = True)
-        for j, (flower, desc) in enumerate(batch): 
+        for j, (flower, desc, image_path) in enumerate(batch): 
             with cols[j]:
-                img = fetch("https://picsum.photos/400/500")
-                st.image(img)
+                st.image(image_path, use_container_width=True)
                 st.subheader(flower)
                 st.write(f"{desc}")
                 if st.button(f"View", key=f"view_button_flower_{i+j}", use_container_width=True, type="primary"):
@@ -103,6 +102,12 @@ custom_css = """
         padding: 10px;
         border-radius: 5px;
         transition: background-color 0.3s;
+    }
+    img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
     }
 </style>
 """
