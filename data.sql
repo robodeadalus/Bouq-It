@@ -21,9 +21,9 @@ VALUES
 -- Insert flowers
 INSERT INTO flowers (name, description, short_desc, image_link, origin, meaning, price)
 VALUES
-('Rose', 'A classic red rose symbolizing love.', 'Symbol of love.', 'link_to_image', 'France', 'Love, Passion', 150.00),
-('Lily', 'A white lily that represents purity.', 'Represents purity.', 'link_to_image', 'Netherlands', 'Purity, Rebirth', 180.00),
-('Daisy', 'A cheerful daisy flower.', 'Symbol of innocence.', 'link_to_image', 'USA', 'Innocence, Joy', 120.00),
+('Rose', 'A classic red rose symbolizing love.', 'Symbol of love.', 'flowers/rose.jpg', 'France', 'Love, Passion', 150.00),
+('Lily', 'A white lily that represents purity.', 'Represents purity.', 'flowers/lily.jpg', 'Netherlands', 'Purity, Rebirth', 180.00),
+('Daisy', 'A cheerful daisy flower.', 'Symbol of innocence.', 'flowers/tulip.jpg', 'USA', 'Innocence, Joy', 120.00),
 ('Tulip', 'A bright and colorful tulip.', 'Symbol of perfect love.', 'link_to_image', 'Turkey', 'Perfect Love', 200.00),
 ('Sunflower', 'A large sunflower symbolizing warmth.', 'Represents adoration.', 'link_to_image', 'Mexico', 'Adoration, Loyalty', 170.00),
 ('Orchid', 'A rare and exotic orchid.', 'Symbol of luxury.', 'link_to_image', 'Philippines', 'Luxury, Beauty', 250.00);
