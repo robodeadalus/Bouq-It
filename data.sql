@@ -31,9 +31,9 @@ VALUES
 -- Insert bouquets
 INSERT INTO bouquets (name, description, short_desc, image_link, origin, meaning, price)
 VALUES
-('Romantic Red', 'A bouquet full of red roses.', 'Passionate love.', 'link_to_image', 'France', 'Love, Romance', 800.00),
-('Pure Elegance', 'A mix of white lilies and orchids.', 'Elegant and pure.', 'link_to_image', 'Netherlands', 'Purity, Grace', 950.00),
-('Sunshine Bliss', 'Sunflowers and daisies combined.', 'A cheerful bouquet.', 'link_to_image', 'Mexico', 'Happiness, Warmth', 750.00),
+('Romantic Red', 'A bouquet full of red roses.', 'Passionate love.', 'bouqets/RomanticRed.jpg', 'France', 'Love, Romance', 800.00),
+('Pure Elegance', 'A mix of white lilies and orchids.', 'Elegant and pure.', 'bouqets/PureElegeance.jpg', 'Netherlands', 'Purity, Grace', 950.00),
+('Sunshine Bliss', 'Sunflowers and daisies combined.', 'A cheerful bouquet.', 'bouqets/SunshineBliss.jpg', 'Mexico', 'Happiness, Warmth', 750.00),
 ('Tulip Dream', 'A bouquet full of colorful tulips.', 'Perfect love bouquet.', 'link_to_image', 'Turkey', 'Love, Perfection', 870.00),
 ('Orchid Beauty', 'A luxurious orchid bouquet.', 'Exotic beauty.', 'link_to_image', 'Philippines', 'Luxury, Beauty', 1200.00),
 ('Daisy Delight', 'A fresh and joyful daisy bouquet.', 'Symbol of happiness.', 'link_to_image', 'USA', 'Joy, Innocence', 650.00);
