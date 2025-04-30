@@ -11,15 +11,15 @@ if not st.session_state.get("selected_items"):
     st.warning("No items selected for checkout")
     st.switch_page("./pages/cart.py")
 
-# Get database session
+
 db = st.session_state["db"]
 
 st.title("Checkout Summary")
 
-# Get user details
+
 user = db.execute(select(User).where(User.id == st.session_state.user_id)).scalar_one()
 
-# Display shipping address
+
 st.subheader("Shipping Details")
 st.write(f"**Name:** {user.first_name} {user.last_name}")
 st.write(f"**Address:** {user.address}")
@@ -29,11 +29,11 @@ st.write(f"**Contact:** {user.contact}")
 
 st.divider()
 
-# Display selected items and calculate total
+
 st.subheader("Order Summary")
 total = 0
 
-# Process selected items
+
 for item_key in st.session_state.selected_items:
     if not st.session_state.selected_items[item_key]:
         continue
@@ -41,7 +41,7 @@ for item_key in st.session_state.selected_items:
     item_type, name = item_key.split("_", 1)
 
     if item_type == "flower":
-        # Get flower details
+
         cf = db.execute(
             select(CustomerFlower)
             .where(CustomerFlower.customer_id == st.session_state.user_id)
@@ -58,7 +58,7 @@ for item_key in st.session_state.selected_items:
         total += flower.price * cf.quantity
 
     elif item_type == "bouquet":
-        # Get bouquet details
+
         cb = db.execute(
             select(CustomerBouquet)
             .where(CustomerBouquet.customer_id == st.session_state.user_id)
@@ -79,7 +79,7 @@ for item_key in st.session_state.selected_items:
 st.divider()
 st.subheader(f"Total: ₱{total:.2f}")
 
-# Payment and final checkout
+
 with st.form("checkout_form"):
     st.selectbox(
         "Payment Method",
@@ -88,11 +88,6 @@ with st.form("checkout_form"):
     )
 
     if st.form_submit_button("Confirm Order"):
-        # Here you would typically:
-        # 1. Create an order record
-        # 2. Transfer items from cart to order tables
-        # 3. Clear selected items from cart
-        # 4. Update shop inventories
 
         st.success("Order placed successfully!")
         st.balloons()
