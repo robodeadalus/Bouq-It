@@ -12,7 +12,7 @@ st.title("Shop Catalogue")
 st.header("Shops")
 
 
-queryShop = select(Shop.name, Shop.address, Shop.barangay, Shop.city)
+queryShop = select(Shop.name, Shop.address, Shop.barangay, Shop.city,Shop.image_link).order_by(Shop.name)
 all_shops = db.execute(queryShop).all()
 
 shops = st.container(key="shops")
@@ -25,10 +25,9 @@ with shops:
         for i in range(4):
             shop_index = row * 4 + i
             if shop_index < num_shops:
-                name, address, barangay, city = all_shops[shop_index]
+                name, address, barangay, city, image_link= all_shops[shop_index]
                 with col[i]:
-                    img = fetch("https://picsum.photos/400/500")
-                    st.image(img)
+                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
                     st.subheader(name)
                     st.write(f"{address}")
                     st.write(f"{barangay}")

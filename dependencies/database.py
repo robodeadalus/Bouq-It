@@ -193,6 +193,7 @@ class Shop(Base):
         Integer,
         CheckConstraint("sales >= 0"),
     )
+    image_link: Mapped[str] = mapped_column(TEXT())
 
     def __repr__(self) -> str:
         return f"Shop(id={self.id!r})"

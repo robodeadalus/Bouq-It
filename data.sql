@@ -9,14 +9,14 @@ VALUES
 ('clarkkent', 'clark@example.com', 'superman123', 'Kent', 'Clark', NULL, '09678901234', '888 Plaza', 'Barangay 6', 'Davao', '8000');
 
 -- Insert shops
-INSERT INTO shops (name, address, barangay, city, zipcode, contact, sales)
+INSERT INTO shops (name, address, barangay, city, zipcode, contact, sales, image_link)
 VALUES
-('Rose Haven', '100 Rose St.', 'Brgy. A', 'Manila', '1000', '09981234567', 1500),
-('Lily Garden', '200 Lily Ave.', 'Brgy. B', 'Quezon City', '1101', '09876543210', 2100),
-('Daisy Blooms', '300 Daisy Rd.', 'Brgy. C', 'Pasig', '1600', '09765432109', 1200),
-('Tulip Wonderland', '400 Tulip Blvd.', 'Brgy. D', 'Makati', '1200', '09654321098', 1800),
-('Sunflower Paradise', '500 Sunflower Circle', 'Brgy. E', 'Cebu', '6000', '09543210987', 900),
-('Orchid Emporium', '600 Orchid Plaza', 'Brgy. F', 'Davao', '8000', '09432109876', 1300);
+('Rose Haven', '100 Rose St.', 'Brgy. A', 'Manila', '1000', '09981234567', 1500,'assets/bouqetShops/roseHaven.png'),
+('Lily Garden', '200 Lily Ave.', 'Brgy. B', 'Quezon City', '1101', '09876543210', 2100,'assets/bouqetShops/lilyGarden.png'),
+('Daisy Blooms', '300 Daisy Rd.', 'Brgy. C', 'Pasig', '1600', '09765432109', 1200,'assets/bouqetShops/daisyBlooms.png'),
+('Tulip Wonderland', '400 Tulip Blvd.', 'Brgy. D', 'Makati', '1200', '09654321098', 1800,'assets/bouqetShops/tulipWonderland.png'),
+('Sunflower Paradise', '500 Sunflower Circle', 'Brgy. E', 'Cebu', '6000', '09543210987', 900,'assets/bouqetShops/sunflowerParadise.jpg'),
+('Orchid Emporium', '600 Orchid Plaza', 'Brgy. F', 'Davao', '8000', '09432109876', 1300,'assets/bouqetShops/orchidEmporium.png');
 
 -- Insert flowers
 INSERT INTO flowers (name, description, short_desc, image_link, origin, meaning, price)
@@ -34,8 +34,8 @@ VALUES
 ('Romantic Red', 'A bouquet full of red roses.', 'Passionate love.', 'bouqets/RomanticRed.jpg', 'France', 'Love, Romance', 800.00),
 ('Pure Elegance', 'A mix of white lilies and orchids.', 'Elegant and pure.', 'bouqets/PureElegeance.jpg', 'Netherlands', 'Purity, Grace', 950.00),
 ('Sunshine Bliss', 'Sunflowers and daisies combined.', 'A cheerful bouquet.', 'bouqets/SunshineBliss.jpg', 'Mexico', 'Happiness, Warmth', 750.00),
-('Tulip Dream', 'A bouquet full of colorful tulips.', 'Perfect love bouquet.', 'link_to_image', 'Turkey', 'Love, Perfection', 870.00),
-('Orchid Beauty', 'A luxurious orchid bouquet.', 'Exotic beauty.', 'link_to_image', 'Philippines', 'Luxury, Beauty', 1200.00),
+('Tulip Dream', 'A bouquet full of colorful tulips.', 'Perfect love bouquet.', 'bouqets/TulipDream.jpg', 'Turkey', 'Love, Perfection', 870.00),
+('Orchid Beauty', 'A luxurious orchid bouquet.', 'Exotic beauty.', 'bouqets/OrchidBeauty.jpg', 'Philippines', 'Luxury, Beauty', 1200.00),
 ('Daisy Delight', 'A fresh and joyful daisy bouquet.', 'Symbol of happiness.', 'bouqets/DaisyDelight.jpg', 'USA', 'Joy, Innocence', 650.00);
 
 -- Insert bouquet_flowers

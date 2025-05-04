@@ -86,7 +86,8 @@ CREATE TABLE shops (
     city VARCHAR(255) NOT NULL,
     zipcode VARCHAR(255) NOT NULL,
     contact VARCHAR(255) NOT NULL,
-    sales INT NOT NULL
+    sales INT NOT NULL,
+    image_link TEXT NOT NULL
 );
 
 CREATE TABLE shop_flowers (

@@ -29,6 +29,8 @@ topShops: Sequence[Shop] = db.execute(queryShop).scalars().all()
 bestShop = st.container(
     key="best shop",
 )
+
+topShopDict = {shop.name: shop for shop in topShops}  
 with bestShop:
     cols = st.columns(
         len(topShops), gap="small", border=True
@@ -36,8 +38,8 @@ with bestShop:
     i = 0
     for shop in topShops:
         with cols[i]:
-            img = fetch("https://picsum.photos/400/500")
-            st.image(img)  # Replace with actual shop images
+            shopImage = topShopDict.get(shop.name)
+            st.image(shopImage.image_link, use_container_width=True)  # Replace with actual shop images
             st.subheader(shop.name, anchor=False)
             # st.write(f"Sales: {shop.sales}")
             if st.button(

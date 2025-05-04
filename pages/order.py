@@ -23,7 +23,7 @@ def add_to_cart(flower_name, price, shop_name):
 
 
 query_available_flowers = (
-    select(Flower.name, Flower.price, ShopFlower.quantity, Shop.name.label("shop_name"))
+    select(Flower.name, Flower.price, ShopFlower.quantity, Flower.image_link,Shop.name.label("shop_name"))
     .join(ShopFlower, Flower.name == ShopFlower.flower_name)
     .join(Shop, ShopFlower.shop_id == Shop.id)
     .filter(ShopFlower.quantity > 0)
@@ -31,7 +31,7 @@ query_available_flowers = (
 
 query_available_bouquets = (
     select(
-        Bouquet.name, Bouquet.price, ShopBouquet.quantity, Shop.name.label("shop_name")
+        Bouquet.name, Bouquet.price, ShopBouquet.quantity, Bouquet.image_link,Shop.name.label("shop_name")
     )
     .join(ShopBouquet, Bouquet.name == ShopBouquet.bouquet_name)
     .join(Shop, ShopBouquet.shop_id == Shop.id)
@@ -59,13 +59,12 @@ with available_flowers:
                     flower_index = row * 4 + col
 
                     if flower_index < num_flowers:
-                        flower, price, quantity, shop_name = all_available_flowers[
+                        flower, price, quantity, image_link,shop_name = all_available_flowers[
                             flower_index
                         ]
 
                         with cols[col]:
-                            img = fetch("https://picsum.photos/400/500")
-                            st.image(img)
+                            st.image(image_link,use_container_width=True)
                             st.subheader(flower)
                             st.write("*" + shop_name + "*")
                             st.write(f"Available: {quantity}")
@@ -96,13 +95,12 @@ with available_bouquets:
                     bouquet_index = row * 4 + col
 
                     if bouquet_index < num_bouquets:
-                        bouquet, price, quantity, shop_name = all_available_bouquets[
+                        bouquet, price, quantity,image_link, shop_name = all_available_bouquets[
                             bouquet_index
                         ]
 
                         with cols[col]:
-                            img = fetch("https://picsum.photos/400/500")
-                            st.image(img)
+                            st.image(image_link, use_container_width=True)
                             st.subheader(bouquet)
                             st.write("*" + shop_name + "*")
                             st.write(f"Available: {quantity}")
