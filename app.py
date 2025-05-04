@@ -74,11 +74,12 @@ pages = [
         title="Language of Flowers",
         icon=":material/auto_stories:",
     ),
-    # HIDDEN PAGES
     st.Page(
         page="pages/custombouquet.py",
         title="Custom Bouquets",
+        icon=":material/emoji_nature:",
     ),
+    # HIDDEN PAGES
     st.Page(
         page="pages/checkout.py",
         title="Checkout Page",

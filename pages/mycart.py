@@ -13,7 +13,7 @@ if "user_id" not in st.session_state:
     st.switch_page("./pages/login.py")
 
 
-db = st.session_state["db"]
+db: Session = st.session_state["db"]
 
 
 if "selected_items" not in st.session_state:
@@ -36,12 +36,22 @@ def get_cart_contents(user_id: int):
         .where(CustomerBouquet.customer_id == user_id)
     ).all()
 
-    return flowers, bouquets
+    custom_bouquets = (
+        db.execute(select(CustomBouquet).where(CustomBouquet.customer_id == user_id))
+        .scalars()
+        .all()
+    )
+
+    return flowers, bouquets, custom_bouquets
 
 
-flowers, bouquets = get_cart_contents(st.session_state.user_id)
+flowers, bouquets, custom_bouquets = get_cart_contents(st.session_state.user_id)
 
-if not flowers and not bouquets:
+# for custom_bouquet in custom_bouquets:
+#     print(custom_bouquet[0])
+#     # print(custom_bouquet.bouquet_name)
+
+if not flowers and not bouquets and not custom_bouquets:
     st.info("Your cart is empty")
     st.stop()
 
@@ -63,6 +73,16 @@ with st.form("cart_form"):
         checked = st.checkbox(
             f"{bouquet.name} (₱{bouquet.price:.2f} × {cb.quantity})"
             + (f" - Design: {cb.design}" if cb.design else ""),
+            value=st.session_state.selected_items.get(key, False),
+            key=key,
+        )
+        st.session_state.selected_items[key] = checked
+
+    for custom_bouquet in custom_bouquets:
+        key = f"custom_{custom_bouquet.bouquet_name}"
+        checked = st.checkbox(
+            f"{custom_bouquet.bouquet_name} (₱{custom_bouquet.price:.2f})"
+            + (f" - Design: {custom_bouquet.design}" if custom_bouquet.design else ""),
             value=st.session_state.selected_items.get(key, False),
             key=key,
         )

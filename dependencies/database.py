@@ -285,3 +285,22 @@ class CustomerBouquet(Base):
 
     def __repr__(self) -> str:
         return f"Customer Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Qty={self.quantity!r})"
+
+
+class CustomBouquet(Base):
+    __tablename__ = "custom_bouquets"
+
+    customer_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("customers.id"),
+        primary_key=True,
+    )
+    bouquet_name: Mapped[str] = mapped_column(
+        String(255),
+        primary_key=True,
+    )
+    price: Mapped[float] = mapped_column(Float(2))
+    design: Mapped[Optional[str]] = mapped_column(String(255))
+
+    def __repr__(self) -> str:
+        return f"Custom Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Price={self.price!r})"

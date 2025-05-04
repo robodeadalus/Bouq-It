@@ -129,3 +129,12 @@ CREATE TABLE customer_bouquets (
     FOREIGN KEY (customer_id) REFERENCES customers (id),
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
 );
+
+CREATE TABLE custom_bouquets (
+    customer_id INT NOT NULL,
+    bouquet_name VARCHAR(255) NOT NULL,
+    design VARCHAR(255),
+    price FLOAT (2) NOT NULL,
+    PRIMARY KEY (customer_id, bouquet_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id)
+);
