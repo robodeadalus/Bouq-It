@@ -13,10 +13,10 @@ st.title("Language of Flowers")
 search = st_keyup("Search", key="0") #https://pypi.org/project/streamlit-keyup/
 
 query_flowers = (
-    select(Flower.name, Flower.description, Flower.short_desc, Flower.origin, Flower.meaning)
+    select(Flower.name, Flower.description, Flower.short_desc, Flower.origin, Flower.meaning,Flower.image_link)
 )
 query_bouquets = (
-    select(Bouquet.name, Bouquet.description, Bouquet.short_desc, Bouquet.origin, Bouquet.meaning)
+    select(Bouquet.name, Bouquet.description, Bouquet.short_desc, Bouquet.origin, Bouquet.meaning,Bouquet.image_link)
 )
 
 all_flowers = db.execute(query_flowers).all()
@@ -24,8 +24,8 @@ all_bouquets = db.execute(query_bouquets).all()
 
 if search:
     all_flowers = [
-        (name, desc, short_desc, origin, meaning)
-        for name, desc, short_desc, origin, meaning in all_flowers
+        (name, desc, short_desc, origin, meaning,image_link)
+        for name, desc, short_desc, origin, meaning, image_link in all_flowers
         if search.lower() in name.lower() 
         or search.lower() in desc.lower()
         or search.lower() in short_desc.lower()
@@ -33,8 +33,8 @@ if search:
         or search.lower() in meaning.lower()
         ]
     all_bouquets = [
-        (name, desc, short_desc, origin, meaning)
-        for name, desc, short_desc, origin, meaning in all_bouquets
+        (name, desc, short_desc, origin, meaning, image_link)
+        for name, desc, short_desc, origin, meaning, image_link in all_bouquets
         if search.lower() in name.lower() 
         or search.lower() in desc.lower()
         or search.lower() in short_desc.lower()
@@ -54,10 +54,9 @@ with flowers:
         for i in range(4):
             flower_index = row * 4 + i
             if flower_index < num_flowers:
-                name, desc, short_desc, origin, meaning = all_flowers[flower_index]
+                name, desc, short_desc, origin, meaning,image_link = all_flowers[flower_index]
                 with col[i]:
-                    img = fetch("https://picsum.photos/400/500")
-                    st.image(img)
+                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
                     st.subheader(name)
                     st.write(f"{meaning}")
                     st.write(f"{desc}")
@@ -74,10 +73,9 @@ with bouquets:
         for i in range(4):
             flower_index = row * 4 + i
             if flower_index < num_bouquets:
-                name, desc, short_desc, origin, meaning = all_bouquets[flower_index]
+                name, desc, short_desc, origin, meaning, image_link = all_bouquets[flower_index]
                 with col[i]:
-                    img = fetch("https://picsum.photos/400/500")
-                    st.image(img)
+                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
                     st.subheader(name)
                     st.write(f"{meaning}")
                     st.write(f"{desc}")
