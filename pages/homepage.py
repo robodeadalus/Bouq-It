@@ -1,5 +1,5 @@
 from sqlalchemy import select
-
+from PIL import Image
 from dependencies.database import *
 from dependencies.helper import fetch
 
@@ -82,8 +82,8 @@ with bestFlower:
     i = 0
     for flower in topFlowers:
         with cols[i]:
-            img = fetch("https://picsum.photos/400/500")
-            st.image(img)
+            flowerImage = flower_details_dict.get(flower.flower_name)
+            st.image(flowerImage.image_link, use_container_width=True)
             st.subheader(flower.flower_name)
             st.write(f"Sales: {flower.quantity}")
             if st.button(f"View", key=f"view_button_{i}",use_container_width=True, type="primary"):
@@ -106,6 +106,13 @@ custom_css = """
         white-space: pre-wrap;
         text-overflow: ellipsis;
         word-break: initial;
+    }
+    
+    img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
     }
 </style>
 """
