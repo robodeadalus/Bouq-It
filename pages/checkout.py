@@ -133,13 +133,15 @@ with st.form("checkout_form"):
 
             if "custom" in st.session_state["checkout"]:
                 for cb in st.session_state["checkout"]["custom"]:
+                    cb:CustomBouquet
                     db.execute(
                         insert(OrderCustom).values(
                             order_id=new_order.id,
                             custom_bouquet=cb.bouquet_name,
+                            price = cb.price
                         )
                     )
-                    db.delete(cb)
+                    # db.delete(cb)
 
             db.commit()
             st.success("Order placed successfully! 🎉")

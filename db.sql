@@ -53,12 +53,12 @@ CREATE TABLE bouquets (
 );
 
 CREATE TABLE custom_bouquets (
-    id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL
         REFERENCES customers(id),
-    bouquet_name VARCHAR(255) NOT NULL,
-    design TEXT,
-    price NUMERIC(10,2) NOT NULL
+    bouquet_name VARCHAR(255) NOT NULL UNIQUE,
+    design VARCHAR(255),
+    price NUMERIC(10,2) NOT NULL,
+    PRIMARY KEY (customer_id, bouquet_name)
 );
 
 CREATE TABLE bouquet_flowers (
@@ -92,10 +92,9 @@ CREATE TABLE order_bouquets (
 CREATE TABLE order_custom (
     order_id INT NOT NULL
         REFERENCES orders(id),
-    custom_bouquet_id INT NOT NULL
-        REFERENCES custom_bouquets(id),
+    custom_bouquet VARCHAR(255) NOT NULL UNIQUE,
     price NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY (order_id, custom_bouquet_id)
+    PRIMARY KEY (order_id, custom_bouquet)
 );
 
 CREATE TABLE shops (

@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import pandas as p
 import streamlit as st
-from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
@@ -179,8 +180,8 @@ with ordered_flowers:
                 # Create bouquet record
                 new_bouquet = CustomBouquet(
                     customer_id=st.session_state.user_id,
-                    bouquet_name=f"Custom Bouquet #{func.now().strftime('%Y%m%d%H%M%S')}",
-                    design=design_desc,
+                    bouquet_name=f"Custom Bouquet #{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                    design=f"{design_desc}",
                     price=total_price,
                 )
 
