@@ -305,3 +305,19 @@ class CustomBouquet(Base):
 
     def __repr__(self) -> str:
         return f"Custom Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Price={self.price!r})"
+
+
+# In your database.py
+class OrderCustom(Base):
+    __tablename__ = "order_custom"
+    order_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("orders.id"),
+        primary_key=True,
+    )
+
+    custom_bouquet: Mapped[str] = mapped_column(
+        String(255),
+        ForeignKey("custom_bouquets.bouquet_name"),
+        primary_key=True,
+    )

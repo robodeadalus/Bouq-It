@@ -47,6 +47,16 @@ CREATE TABLE bouquets (
     price FLOAT (2) NOT NULL
 );
 
+
+CREATE TABLE custom_bouquets (
+    customer_id INT NOT NULL,
+    bouquet_name VARCHAR(255) NOT NULL UNIQUE,
+    design VARCHAR(255),
+    price FLOAT (2) NOT NULL,
+    PRIMARY KEY (customer_id, bouquet_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id)
+);
+
 CREATE TABLE bouquet_flowers (
     bouquet_name VARCHAR(255) NOT NULL,  
     flower_name VARCHAR(255) NOT NULL,
@@ -76,6 +86,14 @@ CREATE TABLE order_bouquets (
     PRIMARY KEY (order_id, bouquet_name),
     FOREIGN KEY (order_id) REFERENCES orders (id),
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+);
+
+CREATE TABLE order_custom (
+    order_id INT NOT NULL,
+    custom_bouquet VARCHAR(255) NOT NULL,
+    PRIMARY KEY (order_id, custom_bouquet),
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (custom_bouquet) REFERENCES custom_bouquets (bouquet_name)
 );
 
 CREATE TABLE shops (
@@ -131,11 +149,5 @@ CREATE TABLE customer_bouquets (
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
 );
 
-CREATE TABLE custom_bouquets (
-    customer_id INT NOT NULL,
-    bouquet_name VARCHAR(255) NOT NULL,
-    design VARCHAR(255),
-    price FLOAT (2) NOT NULL,
-    PRIMARY KEY (customer_id, bouquet_name),
-    FOREIGN KEY (customer_id) REFERENCES customers (id)
-);
+
+

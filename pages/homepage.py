@@ -1,5 +1,6 @@
-from sqlalchemy import select
 from PIL import Image
+from sqlalchemy import select
+
 from dependencies.database import *
 from dependencies.helper import fetch
 
@@ -30,7 +31,7 @@ bestShop = st.container(
     key="best shop",
 )
 
-topShopDict = {shop.name: shop for shop in topShops}  
+topShopDict = {shop.name: shop for shop in topShops}
 with bestShop:
     cols = st.columns(
         len(topShops), gap="small", border=True
@@ -39,7 +40,9 @@ with bestShop:
     for shop in topShops:
         with cols[i]:
             shopImage = topShopDict.get(shop.name)
-            st.image(shopImage.image_link, use_container_width=True)  # Replace with actual shop images
+            st.image(
+                shopImage.image_link, use_container_width=True
+            )  # Replace with actual shop images
             st.subheader(shop.name, anchor=False)
             # st.write(f"Sales: {shop.sales}")
             if st.button(
@@ -55,26 +58,22 @@ with bestShop:
 
 # Best-Selling Flowers
 st.header("Best-Selling Flowers")
-queryFlowers = select(OrderFlower).order_by(OrderFlower.quantity.desc()).limit(4)
-topFlowers: Sequence[OrderFlower] = (
-    db.execute(queryFlowers).scalars().all()
-)  # Execute query properly
+queryFlowers = (
+    select(Flower)
+    .join(OrderFlower, Flower.name == OrderFlower.flower_name)
+    .order_by(OrderFlower.quantity.desc())
+    .limit(4)
+)
+topFlowers = db.execute(queryFlowers).scalars().all()
 
-flower_names = [flower.flower_name for flower in topFlowers]
-detailedFlowers = select(Flower).where(Flower.name.in_(flower_names))
-topFlowerDetails:Sequence[Flower] = (
-    db.execute(detailedFlowers).scalars().all()
-    )
 
-flower_details_dict = {flower.name: flower for flower in topFlowerDetails} 
 @st.dialog("Flower Details")
-def show_flower_details(flower_name):
-    detailed_flower = flower_details_dict.get(flower_name)
-    if detailed_flower:
-            st.write(f"**Price:** ₱{detailed_flower.price:.2f}")
-            st.write(f"**Origin:** {detailed_flower.origin}")
-            st.write(f"**Meaning:** {detailed_flower.meaning}")
-            st.write(f"**Description:** {detailed_flower.description}")
+def show_flower_details(flower):
+    st.write(f"**Price:** ₱{flower.price:.2f}")
+    st.write(f"**Origin:** {flower.origin}")
+    st.write(f"**Meaning:** {flower.meaning}")
+    st.write(f"**Description:** {flower.description}")
+
 
 bestFlower = st.container(key="best flower")
 with bestFlower:
@@ -84,12 +83,15 @@ with bestFlower:
     i = 0
     for flower in topFlowers:
         with cols[i]:
-            flowerImage = flower_details_dict.get(flower.flower_name)
-            st.image(flowerImage.image_link, use_container_width=True)
-            st.subheader(flower.flower_name)
-            st.write(f"Sales: {flower.quantity}")
-            if st.button(f"View", key=f"view_button_{i}",use_container_width=True, type="primary"):
-                show_flower_details(flower.flower_name)
+            st.image(flower.image_link, use_container_width=True)
+            st.subheader(flower.name)
+            if st.button(
+                f"View",
+                key=f"view_button_{i}",
+                use_container_width=True,
+                type="primary",
+            ):
+                show_flower_details(flower)
         i += 1
 
 custom_css = """
