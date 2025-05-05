@@ -11,8 +11,8 @@ if "selected_shop_id" not in st.session_state:
 
 db: Session = st.session_state["db"]
 
-query = select(Shop).where(Shop.id == st.session_state["selected_shop_id"])
-selected_shop = db.execute(query).scalar_one()
+flower_query = select(Shop).where(Shop.id == st.session_state["selected_shop_id"])
+selected_shop = db.execute(flower_query).scalar_one()
 
 st.header(selected_shop.name)
 col1, col2 = st.columns(2)
@@ -28,19 +28,19 @@ st.divider()
 
 st.subheader("Available Flowers")
 
-query = (
+flower_query = (
     select(ShopFlower, Flower)
     .join(Flower, ShopFlower.flower_name == Flower.name)
     .where(ShopFlower.shop_id == selected_shop.id)
     .order_by(Flower.name)
 )
 
-results = db.execute(query).all()
+flower_results = db.execute(flower_query).all()
 
-if not results:
+if not flower_results:
     st.info("This shop currently has no flowers available.")
 else:
-    for shop_flower, flower in results:
+    for shop_flower, flower in flower_results:
         with st.expander(f"{flower.name} - ₱{flower.price:.2f}"):
             col1, col2 = st.columns([1, 2])
             with col1:
@@ -101,3 +101,86 @@ else:
 
                         finally:
                             st.toast(f"Added {qty} {flower.name} to cart")
+
+st.subheader("Available Bouquets")
+
+bouquet_query = (
+    select(ShopBouquet, Bouquet)
+    .join(Bouquet, ShopBouquet.bouquet_name == Bouquet.name)
+    .where(ShopBouquet.shop_id == selected_shop.id)
+    .order_by(Bouquet.name)
+)
+
+bouquet_results = db.execute(bouquet_query).all()
+
+if not bouquet_results:
+    st.info("This shop currently has no bouquets available.")
+else:
+    for shop_bouquet, bouquet in bouquet_results:
+        with st.expander(f"{bouquet.name} - ₱{bouquet.price:.2f}"):
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.image(bouquet.image_link, use_container_width=True)
+
+            with col2:
+                st.write(f"**Price:** ₱{bouquet.price:.2f}")
+                st.write(f"**Origin:** {bouquet.origin}")
+                st.write(f"**Meaning:** {bouquet.meaning}")
+                st.write(f"**Description:** {bouquet.description}")
+
+                # Get flowers in bouquet
+                flowers_query = select(BouquetFlower).where(
+                    BouquetFlower.bouquet_name == bouquet.name
+                )
+                bouquet_flowers = db.execute(flowers_query).scalars().all()
+
+                if bouquet_flowers:
+                    st.write("**Contains:**")
+                    for bf in bouquet_flowers:
+                        st.write(f"- {bf.flower_name} ({bf.quantity}x)")
+
+                if "user_id" not in st.session_state:
+                    st.warning("Please login to add items to your cart")
+                else:
+                    max_qty = min(shop_bouquet.quantity, 5)  # Lower max for bouquets
+                    qty = st.number_input(
+                        "Quantity",
+                        min_value=1,
+                        max_value=max_qty,
+                        value=1,
+                        key=f"qty_bq_{bouquet.name}",
+                    )
+
+                    if st.button("Add to Cart", key=f"add_bq_{bouquet.name}"):
+                        try:
+                            # Check existing cart item
+                            cart_item = db.execute(
+                                select(CustomerBouquet)
+                                .where(
+                                    CustomerBouquet.customer_id
+                                    == st.session_state.user_id
+                                )
+                                .where(CustomerBouquet.bouquet_name == bouquet.name)
+                            ).scalar_one_or_none()
+
+                            if cart_item:
+                                new_qty = cart_item.quantity + qty
+                                if new_qty > shop_bouquet.quantity:
+                                    st.error("Not enough stock for this quantity")
+                                else:
+                                    cart_item.quantity = new_qty
+                                    db.commit()
+                            else:
+                                new_item = CustomerBouquet(
+                                    customer_id=st.session_state.user_id,
+                                    bouquet_name=bouquet.name,
+                                    quantity=qty,
+                                )
+                                db.add(new_item)
+                                db.commit()
+
+                            st.toast(f"Added {qty} {bouquet.name} to cart")
+
+                        except Exception as e:
+                            db.rollback()
+                            st.error(f"Error updating cart: {str(e)}")
