@@ -1,13 +1,23 @@
 from typing import Iterable, Optional
 
 import streamlit as st
-from sqlalchemy import CheckConstraint, Float, ForeignKey, Integer, Sequence, String
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    Sequence,
+    String,
+    func,
+)
 from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
-
 @st.cache_resource
 def db_connect():
+    # Ensure the session uses Asia/Manila timezone (GMT+8)
     db = st.connection(
         "postgresql",
         type="sql",
@@ -30,17 +40,18 @@ class User(Base):
     username: Mapped[str] = mapped_column(
         String(255),
         unique=True,
+        nullable=False,
     )
-    email: Mapped[str] = mapped_column(String(255))
-    password: Mapped[str] = mapped_column(String(255))
-    last_name: Mapped[str] = mapped_column(String(255))
-    first_name: Mapped[str] = mapped_column(String(255))
-    middle_name: Mapped[Optional[str]]
-    contact: Mapped[str] = mapped_column(String(255))
-    address: Mapped[str] = mapped_column(String(255))
-    barangay: Mapped[str] = mapped_column(String(255))
-    city: Mapped[str] = mapped_column(String(255))
-    zipcode: Mapped[str] = mapped_column(String(255))
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    first_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    middle_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    contact: Mapped[str] = mapped_column(String(255), nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    barangay: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255), nullable=False)
+    zipcode: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, name={self.first_name!r} {self.last_name!r})"
@@ -50,23 +61,35 @@ class Order(Base):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(
-        Sequence("orders_id_seq"), primary_key=True, unique=True
+        Sequence("orders_id_seq"),
+        primary_key=True,
+        unique=True
     )
     payment: Mapped[str] = mapped_column(
         String(255),
         CheckConstraint(
-            "IN ('G-Cash', 'Maya', 'Cash on Delivery', 'Credit/Debit Card')",
-            name="orders_payment_check",
+            "payment IN ('G-Cash', 'Maya', 'Cash on Delivery', 'Credit/Debit Card')",
+            name="orders_payment_check"
         ),
+        nullable=False,
     )
-    address: Mapped[str] = mapped_column(String(255))
-    barangay: Mapped[str] = mapped_column(String(255))
-    city: Mapped[str] = mapped_column(String(255))
-    zipcode: Mapped[str] = mapped_column(String(255))
-    ordered_by: Mapped[int] = mapped_column(Integer(), ForeignKey("customers.id"))
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    barangay: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255), nullable=False)
+    zipcode: Mapped[str] = mapped_column(String(255), nullable=False)
+    ordered_by: Mapped[int] = mapped_column(
+        Integer(),
+        ForeignKey("customers.id"),
+        nullable=False
+    )
+    order_date: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now()
+    )
 
     def __repr__(self) -> str:
-        return f"Order(id={self.id!r}, ordered_by={self.ordered_by!r})"
+        return f"Order(id={self.id!r}, ordered_by={self.ordered_by!r}, date={self.order_date!r})"
 
 
 class Flower(Base):
@@ -77,12 +100,12 @@ class Flower(Base):
         primary_key=True,
         unique=True,
     )
-    description: Mapped[str] = mapped_column(TEXT())
-    short_desc: Mapped[str] = mapped_column(TEXT())
-    image_link: Mapped[str] = mapped_column(TEXT())
-    origin: Mapped[str] = mapped_column(TEXT())
-    meaning: Mapped[str] = mapped_column(TEXT())
-    price: Mapped[float] = mapped_column(Float(2))
+    description: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    short_desc: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    image_link: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    origin: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    meaning: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    price: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
 
     def __repr__(self) -> str:
         return f"Flower(name={self.name!r}, price={self.price!r})"
@@ -96,12 +119,12 @@ class Bouquet(Base):
         primary_key=True,
         unique=True,
     )
-    description: Mapped[str] = mapped_column(TEXT())
-    short_desc: Mapped[str] = mapped_column(TEXT())
-    image_link: Mapped[str] = mapped_column(TEXT())
-    origin: Mapped[str] = mapped_column(TEXT())
-    meaning: Mapped[str] = mapped_column(TEXT())
-    price: Mapped[float] = mapped_column(Float(2))
+    description: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    short_desc: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    image_link: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    origin: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    meaning: Mapped[str] = mapped_column(TEXT(), nullable=False)
+    price: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
 
     def __repr__(self) -> str:
         return f"Bouquet(name={self.name!r}, price={self.price!r})"
@@ -112,7 +135,7 @@ class BouquetFlower(Base):
 
     bouquet_name: Mapped[str] = mapped_column(
         String(255),
-        ForeignKey("bouquets.id"),
+        ForeignKey("bouquets.name"),
         primary_key=True,
     )
     flower_name: Mapped[str] = mapped_column(
@@ -123,10 +146,11 @@ class BouquetFlower(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 1"),
+        nullable=False
     )
 
     def __repr__(self) -> str:
-        return f"Bouquet Flower(Bouquet={self.bouquet_name!r}, Flower={self.flower_name!r})"
+        return f"BouquetFlower(Bouquet={self.bouquet_name!r}, Flower={self.flower_name!r})"
 
 
 class OrderFlower(Base):
@@ -145,11 +169,12 @@ class OrderFlower(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 1"),
+        nullable=False
     )
 
     def __repr__(self) -> str:
         return (
-            f"Flower Order(Ordered by={self.order_id!r}, Ordered={self.flower_name!r})"
+            f"OrderFlower(order_id={self.order_id!r}, flower={self.flower_name!r})"
         )
 
 
@@ -169,11 +194,12 @@ class OrderBouquet(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 1"),
+        nullable=False
     )
-    design: Mapped[Optional[str]]
+    design: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     def __repr__(self) -> str:
-        return f"Buoquet Order(Ordered by={self.order_id!r}, Ordered={self.bouquet_name!r})"
+        return f"OrderBouquet(order_id={self.order_id!r}, bouquet={self.bouquet_name!r})"
 
 
 class Shop(Base):
@@ -183,17 +209,18 @@ class Shop(Base):
         primary_key=True,
         unique=True,
     )
-    name: Mapped[str] = mapped_column(String(255))
-    address: Mapped[str] = mapped_column(String(255))
-    barangay: Mapped[str] = mapped_column(String(255))
-    city: Mapped[str] = mapped_column(String(255))
-    zipcode: Mapped[str] = mapped_column(String(255))
-    contact: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    barangay: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255), nullable=False)
+    zipcode: Mapped[str] = mapped_column(String(255), nullable=False)
+    contact: Mapped[str] = mapped_column(String(255), nullable=False)
     sales: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("sales >= 0"),
+        nullable=False
     )
-    image_link: Mapped[str] = mapped_column(TEXT())
+    image_link: Mapped[str] = mapped_column(TEXT(), nullable=False)
 
     def __repr__(self) -> str:
         return f"Shop(id={self.id!r})"
@@ -215,10 +242,11 @@ class ShopFlower(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 0"),
+        nullable=False
     )
 
     def __repr__(self) -> str:
-        return f"Flower Shop(Shop ID={self.shop_id!r}, Flower={self.flower_name!r})"
+        return f"ShopFlower(shop_id={self.shop_id!r}, flower={self.flower_name!r})"
 
 
 class ShopBouquet(Base):
@@ -237,10 +265,11 @@ class ShopBouquet(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 0"),
+        nullable=False
     )
 
     def __repr__(self) -> str:
-        return f"Bouquet Shop(Shop ID={self.shop_id!r}, Bouquet={self.bouquet_name!r})"
+        return f"ShopBouquet(shop_id={self.shop_id!r}, bouquet={self.bouquet_name!r})"
 
 
 class CustomerFlower(Base):
@@ -259,10 +288,11 @@ class CustomerFlower(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 1"),
+        nullable=False
     )
 
     def __repr__(self) -> str:
-        return f"Customer Flower(Customer ID={self.customer_id!r}, Flower={self.flower_name!r}, Qty={self.quantity!r})"
+        return f"CustomerFlower(customer_id={self.customer_id!r}, flower={self.flower_name!r}, qty={self.quantity!r})"
 
 
 class CustomerBouquet(Base):
@@ -281,11 +311,12 @@ class CustomerBouquet(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         CheckConstraint("quantity >= 1"),
+        nullable=False
     )
-    design: Mapped[Optional[str]] = mapped_column(String(255))
+    design: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     def __repr__(self) -> str:
-        return f"Customer Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Qty={self.quantity!r})"
+        return f"CustomerBouquet(customer_id={self.customer_id!r}, bouquet={self.bouquet_name!r}, qty={self.quantity!r})"
 
 
 class CustomBouquet(Base):
@@ -300,14 +331,13 @@ class CustomBouquet(Base):
         String(255),
         primary_key=True,
     )
-    price: Mapped[float] = mapped_column(Float(2))
-    design: Mapped[Optional[str]] = mapped_column(String(255))
+    price: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
+    design: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     def __repr__(self) -> str:
-        return f"Custom Bouquet(Customer ID={self.customer_id!r}, Bouquet={self.bouquet_name!r}, Price={self.price!r})"
+        return f"CustomBouquet(customer_id={self.customer_id!r}, bouquet={self.bouquet_name!r}, price={self.price!r})"
 
 
-# In your database.py
 class OrderCustom(Base):
     __tablename__ = "order_custom"
     order_id: Mapped[int] = mapped_column(
@@ -315,9 +345,11 @@ class OrderCustom(Base):
         ForeignKey("orders.id"),
         primary_key=True,
     )
-
     custom_bouquet: Mapped[str] = mapped_column(
         String(255),
         ForeignKey("custom_bouquets.bouquet_name"),
         primary_key=True,
     )
+
+    def __repr__(self) -> str:
+        return f"OrderCustom(order_id={self.order_id!r}, custom_bouquet={self.custom_bouquet!r})"
