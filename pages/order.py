@@ -14,62 +14,55 @@ st.title("Order Page")
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
 
-def add_to_cart(flower_name: str, price: float, shop_name: str):
-    db = st.session_state["db"]
-
+def add_to_cart(item_name: str, item_type: str):
     if "user_id" not in st.session_state:
-        st.error("Please login first!")
+        st.warning("Please login to add items to cart")
         return
 
     user_id = st.session_state["user_id"]
 
     try:
+        if item_type == "flower":
+            existing = db.execute(
+                select(CustomerFlower)
+                .where(CustomerFlower.customer_id == user_id)
+                .where(CustomerFlower.flower_name == item_name)
+            ).scalar_one_or_none()
 
-        shop = db.execute(select(Shop).where(Shop.name == shop_name)).scalar_one()
+            if existing:
+                existing.quantity += 1
+                db.commit()
+                st.success(f"Added another {item_name} to your cart")
+            else:
+                cf = CustomerFlower(
+                    customer_id=user_id, flower_name=item_name, quantity=1
+                )
+                db.add(cf)
+                db.commit()
+                st.success(f"Added {item_name} to your cart")
 
-        new_order = Order(
-            payment="Cash on Delivery",
-            address="",
-            barangay="",
-            city="",
-            zipcode="",
-            ordered_by=user_id,
-        )
-        db.add(new_order)
-        db.commit()
+        elif item_type == "bouquet":
+            existing = db.execute(
+                select(CustomerBouquet)
+                .where(CustomerBouquet.customer_id == user_id)
+                .where(CustomerBouquet.bouquet_name == item_name)
+            ).scalar_one_or_none()
 
-        order_flower = OrderFlower(
-            order_id=new_order.id, flower_name=flower_name, quantity=1
-        )
-        db.add(order_flower)
+            if existing:
+                existing.quantity += 1
+                db.commit()
+                st.success(f"Added another {item_name} bouquet to your cart")
+            else:
+                cb = CustomerBouquet(
+                    customer_id=user_id, bouquet_name=item_name, quantity=1
+                )
+                db.add(cb)
+                db.commit()
+                st.success(f"Added {item_name} bouquet to your cart")
 
-        shop_flower = db.execute(
-            select(ShopFlower)
-            .where(ShopFlower.shop_id == shop.id)
-            .where(ShopFlower.flower_name == flower_name)
-        ).scalar_one()
-        shop_flower.quantity -= 1
-
-        customer_flower = db.execute(
-            select(CustomerFlower)
-            .where(CustomerFlower.customer_id == user_id)
-            .where(CustomerFlower.flower_name == flower_name)
-        ).scalar_one_or_none()
-
-        if customer_flower:
-            customer_flower.quantity += 1
-        else:
-            new_customer_flower = CustomerFlower(
-                customer_id=user_id, flower_name=flower_name, quantity=1
-            )
-            db.add(new_customer_flower)
-
-        db.commit()
-        st.success(f"Added {flower_name} to your order!")
-
-    except Exception as e:
+    except SQLAlchemyError as e:
         db.rollback()
-        st.error(f"Failed to add to cart: {str(e)}")
+        st.error(f"Database error: {e}")
 
 
 query_available_flowers = (
