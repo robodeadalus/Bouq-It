@@ -1,7 +1,11 @@
+-- Use Manila time (GMT+8) for all timestamp with time zone columns
+SET TIME ZONE 'Asia/Manila';
+
 CREATE DATABASE bouq_it;
 \c bouq_it
+
 CREATE TABLE customers (
-    id SERIAL NOT NULL UNIQUE PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -16,88 +20,85 @@ CREATE TABLE customers (
 );
 
 CREATE TABLE orders (
-    id SERIAL NOT NULL UNIQUE PRIMARY KEY,
-    payment VARCHAR(255) NOT NULL,
-    CHECK (payment IN ('G-Cash', 'Maya', 'Cash on Delivery', 'Credit/Debit Card')),
+    id SERIAL PRIMARY KEY,
+    payment VARCHAR(255) NOT NULL
+        CHECK (payment IN ('G-Cash', 'Maya', 'Cash on Delivery', 'Credit/Debit Card')),
     address VARCHAR(255) NOT NULL,
     barangay VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     zipcode VARCHAR(255) NOT NULL,
-    ordered_by INT NOT NULL,
-    FOREIGN KEY (ordered_by) REFERENCES customers(id)
+    ordered_by INT NOT NULL
+        REFERENCES customers(id),
+    order_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE flowers (
-    name VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    name VARCHAR(255) PRIMARY KEY,
     description TEXT NOT NULL,
     short_desc TEXT NOT NULL,
     image_link TEXT NOT NULL,
     origin TEXT NOT NULL,
     meaning TEXT NOT NULL,
-    price FLOAT (2) NOT NULL
+    price NUMERIC(10,2) NOT NULL
 );
 
 CREATE TABLE bouquets (
-    name VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    name VARCHAR(255) PRIMARY KEY,
     description TEXT NOT NULL,
     short_desc TEXT NOT NULL,
     image_link TEXT NOT NULL,
     origin TEXT NOT NULL,
     meaning TEXT NOT NULL,
-    price FLOAT (2) NOT NULL
+    price NUMERIC(10,2) NOT NULL
 );
 
-
 CREATE TABLE custom_bouquets (
-    customer_id INT NOT NULL,
+    customer_id INT NOT NULL
+        REFERENCES customers(id),
     bouquet_name VARCHAR(255) NOT NULL UNIQUE,
     design VARCHAR(255),
-    price FLOAT (2) NOT NULL,
-    PRIMARY KEY (customer_id, bouquet_name),
-    FOREIGN KEY (customer_id) REFERENCES customers (id)
+    price NUMERIC(10,2) NOT NULL,
+    PRIMARY KEY (customer_id, bouquet_name)
 );
 
 CREATE TABLE bouquet_flowers (
-    bouquet_name VARCHAR(255) NOT NULL,  
-    flower_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    CHECK (quantity >= 1),
-    PRIMARY KEY (bouquet_name, flower_name),
-    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name),
-    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+    bouquet_name VARCHAR(255) NOT NULL
+        REFERENCES bouquets(name),
+    flower_name VARCHAR(255) NOT NULL
+        REFERENCES flowers(name),
+    quantity INT NOT NULL CHECK (quantity >= 1),
+    PRIMARY KEY (bouquet_name, flower_name)
 );
 
 CREATE TABLE order_flowers (
-    order_id INT NOT NULL,
-    flower_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    CHECK (quantity >= 1),
-    PRIMARY KEY (order_id, flower_name),
-    FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+    order_id INT NOT NULL
+        REFERENCES orders(id),
+    flower_name VARCHAR(255) NOT NULL
+        REFERENCES flowers(name),
+    quantity INT NOT NULL CHECK (quantity >= 1),
+    PRIMARY KEY (order_id, flower_name)
 );
 
 CREATE TABLE order_bouquets (
-    order_id INT NOT NULL,
-    bouquet_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
+    order_id INT NOT NULL
+        REFERENCES orders(id),
+    bouquet_name VARCHAR(255) NOT NULL
+        REFERENCES bouquets(name),
+    quantity INT NOT NULL CHECK (quantity >= 1),
     design VARCHAR(255),
-    CHECK (quantity >= 1),
-    PRIMARY KEY (order_id, bouquet_name),
-    FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+    PRIMARY KEY (order_id, bouquet_name)
 );
 
 CREATE TABLE order_custom (
-    order_id INT NOT NULL,
-    custom_bouquet VARCHAR(255) NOT NULL,
-    PRIMARY KEY (order_id, custom_bouquet),
-    FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (custom_bouquet) REFERENCES custom_bouquets (bouquet_name)
+    order_id INT NOT NULL
+        REFERENCES orders(id),
+    custom_bouquet VARCHAR(255) NOT NULL 
+        REFERENCES custom_bouquets(bouquet_name),
+    PRIMARY KEY (order_id, custom_bouquet)
 );
 
 CREATE TABLE shops (
-    id SERIAL NOT NULL UNIQUE PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
     barangay VARCHAR(255) NOT NULL,
@@ -109,45 +110,38 @@ CREATE TABLE shops (
 );
 
 CREATE TABLE shop_flowers (
-    shop_id INT NOT NULL,
-    flower_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    CHECK (quantity >= 0),
-    PRIMARY KEY (shop_id, flower_name),
-    FOREIGN KEY (shop_id) REFERENCES shops (id),
-    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+    shop_id INT NOT NULL
+        REFERENCES shops(id),
+    flower_name VARCHAR(255) NOT NULL
+        REFERENCES flowers(name),
+    quantity INT NOT NULL CHECK (quantity >= 0),
+    PRIMARY KEY (shop_id, flower_name)
 );
 
 CREATE TABLE shop_bouquets (
-    shop_id INT NOT NULL,
-    bouquet_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    CHECK (quantity >= 0),
-    PRIMARY KEY (shop_id, bouquet_name),
-    FOREIGN KEY (shop_id) REFERENCES shops (id),
-    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+    shop_id INT NOT NULL
+        REFERENCES shops(id),
+    bouquet_name VARCHAR(255) NOT NULL
+        REFERENCES bouquets(name),
+    quantity INT NOT NULL CHECK (quantity >= 0),
+    PRIMARY KEY (shop_id, bouquet_name)
 );
 
 CREATE TABLE customer_flowers (
-    customer_id INT NOT NULL,
-    flower_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    CHECK (quantity >= 1),
-    PRIMARY KEY (customer_id, flower_name),
-    FOREIGN KEY (customer_id) REFERENCES customers (id),
-    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+    customer_id INT NOT NULL
+        REFERENCES customers(id),
+    flower_name VARCHAR(255) NOT NULL
+        REFERENCES flowers(name),
+    quantity INT NOT NULL CHECK (quantity >= 1),
+    PRIMARY KEY (customer_id, flower_name)
 );
 
 CREATE TABLE customer_bouquets (
-    customer_id INT NOT NULL,
-    bouquet_name VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
+    customer_id INT NOT NULL
+        REFERENCES customers(id),
+    bouquet_name VARCHAR(255) NOT NULL
+        REFERENCES bouquets(name),
+    quantity INT NOT NULL CHECK (quantity >= 1),
     design VARCHAR(255),
-    CHECK (quantity >= 1),
-    PRIMARY KEY (customer_id, bouquet_name),
-    FOREIGN KEY (customer_id) REFERENCES customers (id),
-    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+    PRIMARY KEY (customer_id, bouquet_name)
 );
-
-
-
