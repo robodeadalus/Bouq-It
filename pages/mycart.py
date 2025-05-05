@@ -233,5 +233,4 @@ with st.form("cart_form"):
             st.switch_page("./pages/checkout.py")
 
 st.divider()
-if st.button("🔄 Refresh Cart"):
-    st.rerun()
+
