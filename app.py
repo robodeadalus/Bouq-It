@@ -60,11 +60,6 @@ pages = [
         icon=":material/storefront:",
     ),
     st.Page(
-        page="pages/locator.py",
-        title="Flower Shop Locator",
-        icon=":material/pin_drop:",
-    ),
-    st.Page(
         page="pages/order.py",
         title="Order Page",
         icon=":material/shopping_cart:",
@@ -83,6 +78,10 @@ pages = [
     st.Page(
         page="pages/checkout.py",
         title="Checkout Page",
+    ),
+    st.Page(
+        page="pages/myorders.py",
+        title="My Orders",
     ),
     st.Page(
         page="pages/mycart.py",
@@ -116,6 +115,8 @@ with st.sidebar:
         st.markdown("---")
         if st.session_state["authentication_status"]:
             st.write(f"Hello {st.session_state['name']}")
+            if st.button("My Orders", use_container_width=True):
+                st.switch_page("pages/myorders.py")
             if st.button("View Cart", use_container_width=True):
                 st.switch_page("pages/mycart.py")
             if st.button("Logout", use_container_width=True):
