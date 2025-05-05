@@ -3,22 +3,17 @@ from sqlalchemy import join, select
 
 from dependencies.database import *
 
-# Set page title
 st.title("Shop Details")
 
-# Check if we have a selected shop
 if "selected_shop_id" not in st.session_state:
     st.warning("No shop selected. Redirecting to homepage...")
     st.switch_page("./pages/homepage.py")
 
-# Get database session
 db: Session = st.session_state["db"]
 
-# Fetch the selected shop details
 query = select(Shop).where(Shop.id == st.session_state["selected_shop_id"])
 selected_shop = db.execute(query).scalar_one()
 
-# Display shop details
 st.header(selected_shop.name)
 col1, col2 = st.columns(2)
 with col1:
@@ -31,10 +26,8 @@ with col2:
 
 st.divider()
 
-# Display available flowers with complete details
 st.subheader("Available Flowers")
 
-# Join ShopFlower with Flower to get complete details
 query = (
     select(ShopFlower, Flower)
     .join(Flower, ShopFlower.flower_name == Flower.name)
@@ -51,21 +44,19 @@ else:
         with st.expander(f"{flower.name} - ₱{flower.price:.2f}"):
             col1, col2 = st.columns([1, 2])
             with col1:
-                pass
-                # st.image(flower.image_link, width=200)
+                st.image(flower.image_link, use_container_width=True)
+
             with col2:
                 st.write(f"**Price:** ₱{flower.price:.2f}")
                 st.write(f"**Available Quantity:** {shop_flower.quantity}")
                 st.write(f"**Origin:** {flower.origin}")
                 st.write(f"**Meaning:** {flower.meaning}")
                 st.write(f"**Description:** {flower.description}")
-                # You could add an "Add to Cart" button here if needed
+
                 if "user_id" not in st.session_state:
                     st.warning("Please login to add items to your cart")
                 else:
-                    max_qty = min(
-                        shop_flower.quantity, 10
-                    )  # Limit to 10 items max per addition
+                    max_qty = min(shop_flower.quantity, 10)
                     qty = st.number_input(
                         "Quantity",
                         min_value=1,
@@ -76,7 +67,7 @@ else:
 
                     if st.button("Add to Cart", key=f"add_{flower.name}"):
                         try:
-                            # Check existing cart item
+
                             cart_item = db.execute(
                                 select(CustomerFlower)
                                 .where(
@@ -87,7 +78,7 @@ else:
                             ).scalar_one_or_none()
 
                             if cart_item:
-                                # Update existing quantity
+
                                 new_qty = cart_item.quantity + qty
                                 if new_qty > shop_flower.quantity:
                                     st.error("Not enough stock for this quantity")
@@ -95,7 +86,7 @@ else:
                                     cart_item.quantity = new_qty
                                     db.commit()
                             else:
-                                # Add new item to cart
+
                                 new_item = CustomerFlower(
                                     customer_id=st.session_state.user_id,
                                     flower_name=flower.name,
