@@ -92,8 +92,8 @@ def get_user_orders(user_id: int):
 
         # custom
         for oc, cq in db.execute(
-            select(OrderCustom, CQ)
-            .join(CQ, OrderCustom.custom_bouquet == CQ.bouquet_name)
+            select(OrderCustom, CustomBouquet)
+            .join(CustomBouquet, OrderCustom.custom_bouquet_id == CustomBouquet.id)
             .where(OrderCustom.order_id == oid)
         ):
             items.append(
@@ -101,8 +101,8 @@ def get_user_orders(user_id: int):
                     "Type": "Custom Bouquet",
                     "Name": cq.bouquet_name + (f" ({cq.design})" if cq.design else ""),
                     "Quantity": 1,
-                    "Unit Price": float(cq.price),
-                    "Total": float(cq.price),
+                    "Unit Price": float(oc.price),
+                    "Total": float(oc.price),
                 }
             )
 

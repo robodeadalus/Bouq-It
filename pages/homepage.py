@@ -2,7 +2,6 @@ from PIL import Image
 from sqlalchemy import select
 
 from dependencies.database import *
-from dependencies.helper import fetch
 
 db: Session = st.session_state["db"]
 st.title("Homepage")
@@ -79,7 +78,7 @@ with bestFlower:
     for flower in topFlowers:
         with cols[i]:
             st.image(flower.image_link, use_container_width=True)
-            st.subheader(flower.name)
+            st.subheader(flower.name, anchor=False)
             if st.button(
                 f"View",
                 key=f"view_button_{i}",

@@ -232,6 +232,3 @@ with st.form("cart_form"):
             st.session_state.selected_items = selected_items
             st.switch_page("./pages/checkout.py")
 
-st.divider()
-if st.button("🔄 Refresh Cart"):
-    st.rerun()

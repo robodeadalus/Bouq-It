@@ -322,17 +322,11 @@ class CustomerBouquet(Base):
 class CustomBouquet(Base):
     __tablename__ = "custom_bouquets"
 
-    customer_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("customers.id"),
-        primary_key=True,
-    )
-    bouquet_name: Mapped[str] = mapped_column(
-        String(255),
-        primary_key=True,
-    )
-    price: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
-    design: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
+    bouquet_name: Mapped[str] = mapped_column(String(255))
+    price: Mapped[float] = mapped_column(Numeric(10, 2))
+    design: Mapped[Optional[str]] = mapped_column(TEXT())
 
     def __repr__(self) -> str:
         return f"CustomBouquet(customer_id={self.customer_id!r}, bouquet={self.bouquet_name!r}, price={self.price!r})"
@@ -340,16 +334,10 @@ class CustomBouquet(Base):
 
 class OrderCustom(Base):
     __tablename__ = "order_custom"
-    order_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("orders.id"),
-        primary_key=True,
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), primary_key=True)
+    custom_bouquet_id: Mapped[int] = mapped_column(
+        ForeignKey("custom_bouquets.id"), primary_key=True
     )
-    custom_bouquet: Mapped[str] = mapped_column(
-        String(255),
-        ForeignKey("custom_bouquets.bouquet_name"),
-        primary_key=True,
-    )
-
+    price: Mapped[float] = mapped_column(Numeric(10, 2))
     def __repr__(self) -> str:
         return f"OrderCustom(order_id={self.order_id!r}, custom_bouquet={self.custom_bouquet!r})"

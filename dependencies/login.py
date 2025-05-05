@@ -145,3 +145,4 @@ class auth_flow:
 
     def logout(self):
         self.authenticator.logout()
+        del st.session_state["user_id"]

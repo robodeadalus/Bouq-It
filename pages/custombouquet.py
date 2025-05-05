@@ -179,8 +179,8 @@ with ordered_flowers:
                 # Create bouquet record
                 new_bouquet = CustomBouquet(
                     customer_id=st.session_state.user_id,
-                    bouquet_name="Custom Bouquet",
-                    design=f"Custom Bouquet from {selected_shop.name}\n{design_desc}",
+                    bouquet_name=f"Custom Bouquet #{func.now().strftime('%Y%m%d%H%M%S')}",
+                    design=design_desc,
                     price=total_price,
                 )
 
