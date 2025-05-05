@@ -1,7 +1,6 @@
-import requests
 import streamlit as st
-from PIL import Image
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from dependencies.database import *
 from dependencies.helper import fetch
@@ -15,24 +14,66 @@ st.title("Order Page")
 search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
 
 
-def add_to_cart(flower_name, price, shop_name):
-    st.session_state["cart"].append(
-        {"flower": flower_name, "price": price, "shop": shop_name}
-    )
-    st.success(f"Added {flower_name} to cart!")
+def add_to_cart(item_name: str, item_type: str):
+    if "user_id" not in st.session_state:
+        st.warning("Please login to add items to cart")
+        return
+
+    user_id = st.session_state["user_id"]
+
+    try:
+        if item_type == "flower":
+            existing = db.execute(
+                select(CustomerFlower)
+                .where(CustomerFlower.customer_id == user_id)
+                .where(CustomerFlower.flower_name == item_name)
+            ).scalar_one_or_none()
+
+            if existing:
+                existing.quantity += 1
+                db.commit()
+                st.success(f"Added another {item_name} to your cart")
+            else:
+                cf = CustomerFlower(
+                    customer_id=user_id, flower_name=item_name, quantity=1
+                )
+                db.add(cf)
+                db.commit()
+                st.success(f"Added {item_name} to your cart")
+
+        elif item_type == "bouquet":
+            existing = db.execute(
+                select(CustomerBouquet)
+                .where(CustomerBouquet.customer_id == user_id)
+                .where(CustomerBouquet.bouquet_name == item_name)
+            ).scalar_one_or_none()
+
+            if existing:
+                existing.quantity += 1
+                db.commit()
+                st.success(f"Added another {item_name} bouquet to your cart")
+            else:
+                cb = CustomerBouquet(
+                    customer_id=user_id, bouquet_name=item_name, quantity=1
+                )
+                db.add(cb)
+                db.commit()
+                st.success(f"Added {item_name} bouquet to your cart")
+
+    except SQLAlchemyError as e:
+        db.rollback()
+        st.error(f"Database error: {e}")
 
 
 query_available_flowers = (
-    select(Flower.name, Flower.price, ShopFlower.quantity, Flower.image_link,Shop.name.label("shop_name"))
+    select(Flower, ShopFlower, Shop)
     .join(ShopFlower, Flower.name == ShopFlower.flower_name)
     .join(Shop, ShopFlower.shop_id == Shop.id)
     .filter(ShopFlower.quantity > 0)
 )
 
 query_available_bouquets = (
-    select(
-        Bouquet.name, Bouquet.price, ShopBouquet.quantity, Bouquet.image_link,Shop.name.label("shop_name")
-    )
+    select(Bouquet, ShopBouquet, Shop)
     .join(ShopBouquet, Bouquet.name == ShopBouquet.bouquet_name)
     .join(Shop, ShopBouquet.shop_id == Shop.id)
     .filter(ShopBouquet.quantity > 0)
@@ -59,21 +100,21 @@ with available_flowers:
                     flower_index = row * 4 + col
 
                     if flower_index < num_flowers:
-                        flower, price, quantity, image_link,shop_name = all_available_flowers[
-                            flower_index
-                        ]
+                        f, fs, s = all_available_flowers[flower_index]
 
                         with cols[col]:
-                            st.image(image_link,use_container_width=True)
-                            st.subheader(flower)
-                            st.write("*" + shop_name + "*")
-                            st.write(f"Available: {quantity}")
-                            st.write(f"₱{price:.2f}")
-
-                            if st.button(
-                                "", icon=":material/add_circle:", key=f"add_{cols[col]}"
-                            ):
-                                add_to_cart(flower, price, shop_name)
+                            st.image(f.image_link, use_container_width=True)
+                            st.subheader(f.name, anchor=False)
+                            st.write("*" + s.name + "*")
+                            st.write(f"Available: {fs.quantity}")
+                            st.write(f"₱{f.price:.2f}")
+                            if "user_id" in st.session_state:
+                                if st.button(
+                                    "",
+                                    icon=":material/add_circle:",
+                                    key=f"add_{cols[col]}",
+                                ):
+                                    add_to_cart(f.name, "flower")
             else:
                 st.info("No flowers available at the moment.")
 
@@ -95,30 +136,23 @@ with available_bouquets:
                     bouquet_index = row * 4 + col
 
                     if bouquet_index < num_bouquets:
-                        bouquet, price, quantity,image_link, shop_name = all_available_bouquets[
-                            bouquet_index
-                        ]
+                        b, bs, s = all_available_bouquets[bouquet_index]
 
                         with cols[col]:
-                            st.image(image_link, use_container_width=True)
-                            st.subheader(bouquet)
-                            st.write("*" + shop_name + "*")
-                            st.write(f"Available: {quantity}")
-                            st.write(f"₱{price:.2f}")
-
-                            if st.button(
-                                "", icon=":material/add_circle:", key=f"add_{cols[col]}"
-                            ):
-                                add_to_cart(bouquet, price, shop_name)
+                            st.image(b.image_link, use_container_width=True)
+                            st.subheader(b.name, anchor=False)
+                            st.write("*" + s.name + "*")
+                            st.write(f"Available: {bs.quantity}")
+                            st.write(f"₱{b.price:.2f}")
+                            if "user_id" in st.session_state:
+                                if st.button(
+                                    "",
+                                    icon=":material/add_circle:",
+                                    key=f"add_{cols[col]}",
+                                ):
+                                    add_to_cart(b.name, "bouquet")
             else:
                 st.info("No bouquets available at the moment.")
-
-st.header("Shopping Cart")
-if st.session_state["cart"]:
-    for item in st.session_state["cart"]:
-        st.write(f"{item['flower']} - ₱{item['price']:.2f} ({item['shop']})")
-else:
-    st.write("Your cart is empty.")
 
 custom_css = """
 <style>
@@ -143,6 +177,13 @@ custom_css = """
         background-color: white !important;
         margin-top: -50px !important; 
         float: right;
+    }
+    img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    object-position: 20% 1;
     }
 </style>
 """
