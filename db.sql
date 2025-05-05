@@ -47,6 +47,16 @@ CREATE TABLE bouquets (
     price FLOAT (2) NOT NULL
 );
 
+
+CREATE TABLE custom_bouquets (
+    customer_id INT NOT NULL,
+    bouquet_name VARCHAR(255) NOT NULL UNIQUE,
+    design VARCHAR(255),
+    price FLOAT (2) NOT NULL,
+    PRIMARY KEY (customer_id, bouquet_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id)
+);
+
 CREATE TABLE bouquet_flowers (
     bouquet_name VARCHAR(255) NOT NULL,  
     flower_name VARCHAR(255) NOT NULL,
@@ -78,6 +88,14 @@ CREATE TABLE order_bouquets (
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
 );
 
+CREATE TABLE order_custom (
+    order_id INT NOT NULL,
+    custom_bouquet VARCHAR(255) NOT NULL,
+    PRIMARY KEY (order_id, custom_bouquet),
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (custom_bouquet) REFERENCES custom_bouquets (bouquet_name)
+);
+
 CREATE TABLE shops (
     id SERIAL NOT NULL UNIQUE PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -86,7 +104,8 @@ CREATE TABLE shops (
     city VARCHAR(255) NOT NULL,
     zipcode VARCHAR(255) NOT NULL,
     contact VARCHAR(255) NOT NULL,
-    sales INT NOT NULL
+    sales INT NOT NULL,
+    image_link TEXT NOT NULL
 );
 
 CREATE TABLE shop_flowers (
@@ -108,3 +127,27 @@ CREATE TABLE shop_bouquets (
     FOREIGN KEY (shop_id) REFERENCES shops (id),
     FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
 );
+
+CREATE TABLE customer_flowers (
+    customer_id INT NOT NULL,
+    flower_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    CHECK (quantity >= 1),
+    PRIMARY KEY (customer_id, flower_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id),
+    FOREIGN KEY (flower_name) REFERENCES flowers (name)
+);
+
+CREATE TABLE customer_bouquets (
+    customer_id INT NOT NULL,
+    bouquet_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    design VARCHAR(255),
+    CHECK (quantity >= 1),
+    PRIMARY KEY (customer_id, bouquet_name),
+    FOREIGN KEY (customer_id) REFERENCES customers (id),
+    FOREIGN KEY (bouquet_name) REFERENCES bouquets (name)
+);
+
+
+

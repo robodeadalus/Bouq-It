@@ -1,0 +1,56 @@
+import requests
+import streamlit as st
+from PIL import Image
+from sqlalchemy import select
+
+from dependencies.database import *
+from dependencies.helper import fetch
+
+db: Session = st.session_state["db"]
+st.title("Shop Catalogue")
+
+st.header("Shops")
+
+
+queryShop = select(Shop.name, Shop.address, Shop.barangay, Shop.city,Shop.image_link).order_by(Shop.name)
+all_shops = db.execute(queryShop).all()
+
+shops = st.container(key="shops")
+
+with shops:
+    num_shops = len(all_shops)
+    num_rows = (num_shops + 3) // 4
+    for row in range(num_rows):
+        col = st.columns(4, gap="small", border=True)
+        for i in range(4):
+            shop_index = row * 4 + i
+            if shop_index < num_shops:
+                name, address, barangay, city, image_link= all_shops[shop_index]
+                with col[i]:
+                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
+                    st.subheader(name)
+                    st.write(f"{address}")
+                    st.write(f"{barangay}")
+                    st.write(f"{city}")
+
+custom_css = """
+<style>
+    div[data-testid="stColumn"] {
+        display: flex;
+    }
+    .desc {
+        padding: 10px;
+        text-align: center;
+    }
+    .st-key-shops .stColumn  {
+        background-color: white;
+    }
+    .st-key-shops [data-testid="stHorizontalBlock"] {
+        padding: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+</style>
+"""
+
+st.markdown(custom_css, unsafe_allow_html=True)
