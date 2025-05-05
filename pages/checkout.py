@@ -1,11 +1,9 @@
-# pages/checkout.py
 import streamlit as st
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 
 from dependencies.database import *
 
-# Authentication check
 if not st.session_state.get("authentication_status", False):
     st.switch_page("./pages/homepage.py")
 
@@ -17,11 +15,9 @@ db: Session = st.session_state["db"]
 
 st.title("Checkout Summary")
 
-# Get user details
 user = db.execute(select(User).where(User.id == st.session_state.user_id)).scalar_one()
 
-# Display shipping address
-st.subheader("Shipping Details")
+st.subheader("Shipping Details", anchor=False)
 col1, col2 = st.columns(2)
 with col1:
     st.write(f"**Name:** {user.first_name} {user.last_name}")
@@ -33,24 +29,21 @@ with col2:
 
 st.divider()
 
-# Display order summary
-st.subheader("Order Summary")
+st.subheader("Order Summary", anchor=False)
 total = 0
 
-# Process flowers
-if "flowers" in st.session_state.checkout and st.session_state.checkout["flowers"]:
+if "flowers" in st.session_state["checkout"] and st.session_state["checkout"]["flowers"]:
     st.write("**Flowers**")
-    for cf, flower in st.session_state.checkout["flowers"]:
+    for cf, flower in st.session_state["checkout"]["flowers"]:
         item_total = flower.price * cf.quantity
         total += item_total
         st.write(f"- {flower.name}")
         st.write(f"  Quantity: {cf.quantity}")
         st.write(f"  Price: ₱{flower.price:.2f} × {cf.quantity} = ₱{item_total:.2f}")
 
-# Process bouquets
-if "bouquets" in st.session_state.checkout and st.session_state.checkout["bouquets"]:
+if "bouquets" in st.session_state["checkout"] and st.session_state["checkout"]["bouquets"]:
     st.write("**Pre-made Bouquets**")
-    for cb, bouquet in st.session_state.checkout["bouquets"]:
+    for cb, bouquet in st.session_state["checkout"]["bouquets"]:
         item_total = bouquet.price * cb.quantity
         total += item_total
         st.write(f"- {bouquet.name}")
@@ -59,10 +52,9 @@ if "bouquets" in st.session_state.checkout and st.session_state.checkout["bouque
             st.write(f"  Design: {cb.design}")
         st.write(f"  Price: ₱{bouquet.price:.2f} × {cb.quantity} = ₱{item_total:.2f}")
 
-# Process custom bouquets
-if "custom" in st.session_state.checkout and st.session_state.checkout["custom"]:
+if "custom" in st.session_state["checkout"] and st.session_state["checkout"]["custom"]:
     st.write("**Custom Bouquets**")
-    for cb in st.session_state.checkout["custom"]:
+    for cb in st.session_state["checkout"]["custom"]:
         total += cb.price
         st.write(f"- {cb.bouquet_name}")
         if cb.design:
@@ -72,7 +64,7 @@ if "custom" in st.session_state.checkout and st.session_state.checkout["custom"]
 st.divider()
 st.subheader(f"Total: ₱{total:.2f}")
 
-# Payment method selection
+
 with st.form("checkout_form"):
     payment_method = st.selectbox(
         "Payment Method", ["G-Cash", "Maya", "Cash on Delivery", "Credit/Debit Card"]
@@ -80,7 +72,6 @@ with st.form("checkout_form"):
 
     if st.form_submit_button("Confirm Order"):
         try:
-            # Create order record
             new_order = Order(
                 payment=payment_method,
                 address=user.address,
@@ -90,11 +81,10 @@ with st.form("checkout_form"):
                 ordered_by=st.session_state.user_id,
             )
             db.add(new_order)
-            db.flush()  # Get the order ID before commit
+            db.flush()
 
-            # Process flowers
-            if "flowers" in st.session_state.checkout:
-                for cf, flower in st.session_state.checkout["flowers"]:
+            if "flowers" in st.session_state["checkout"]:
+                for cf, flower in st.session_state["checkout"]["flowers"]:
                     db.execute(
                         insert(OrderFlower).values(
                             order_id=new_order.id,
@@ -102,12 +92,10 @@ with st.form("checkout_form"):
                             quantity=cf.quantity,
                         )
                     )
-                    # Remove from cart
                     db.delete(cf)
 
-            # Process bouquets
-            if "bouquets" in st.session_state.checkout:
-                for cb, bouquet in st.session_state.checkout["bouquets"]:
+            if "bouquets" in st.session_state["checkout"]:
+                for cb, bouquet in st.session_state["checkout"]["bouquets"]:
                     db.execute(
                         insert(OrderBouquet).values(
                             order_id=new_order.id,
@@ -116,14 +104,11 @@ with st.form("checkout_form"):
                             design=cb.design,
                         )
                     )
-                    # Remove from cart
                     db.delete(cb)
-
-            # Process custom bouquets
-            if "custom" in st.session_state.checkout:
-                for cb in st.session_state.checkout["custom"]:
-                    # Update shop inventory for custom bouquet components
-                    cb : CustomBouquet
+                    
+            if "custom" in st.session_state["checkout"]:
+                for cb in st.session_state["checkout"]["custom"]:
+                    cb: CustomBouquet
                     design_items = cb.design.split("\n")
                     for item in design_items:
                         if "x" in item:
@@ -131,7 +116,6 @@ with st.form("checkout_form"):
                             quantity = int(quantity.strip().split(" ")[0])
                             flower_name = flower_name.split("@")[0].strip()
 
-                            # Update shop flower quantity
                             shop_flower = db.execute(
                                 select(ShopFlower)
                                 .where(ShopFlower.shop_id == cb.shop_id)
@@ -141,27 +125,21 @@ with st.form("checkout_form"):
                             shop_flower.quantity -= quantity
                             db.add(shop_flower)
 
-                    # Add to order_custom_bouquets (you'll need to create this table)
                     db.execute(
                         insert(OrderCustom).values(
                             order_id=new_order.id,
                             custom_bouquet_id=cb.bouquet_name,
                         )
                     )
-                    # Remove from cart
+
                     db.delete(cb)
 
             db.commit()
             st.success("Order placed successfully! 🎉")
-            st.balloons()
 
-            # Clear checkout data
-            del st.session_state.checkout
+            st.session_state["checkout"] = {}
             st.session_state.selected_items = {}
-
-            # Redirect to homepage after 3 seconds
-            st.write("Redirecting to homepage...")
-            st.rerun()
+            st.switch_page("pages/myorders.py")
 
         except SQLAlchemyError as e:
             db.rollback()

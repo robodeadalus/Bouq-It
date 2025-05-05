@@ -9,14 +9,24 @@ from dependencies.helper import fetch
 db: Session = st.session_state["db"]
 
 st.title("Language of Flowers")
-#search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
-search = st_keyup("Search", key="0") #https://pypi.org/project/streamlit-keyup/
+# search_bar = st.text_input("none", placeholder="Search", label_visibility="hidden")
+search = st_keyup("Search", key="0")  # https://pypi.org/project/streamlit-keyup/
 
-query_flowers = (
-    select(Flower.name, Flower.description, Flower.short_desc, Flower.origin, Flower.meaning,Flower.image_link)
+query_flowers = select(
+    Flower.name,
+    Flower.description,
+    Flower.short_desc,
+    Flower.origin,
+    Flower.meaning,
+    Flower.image_link,
 )
-query_bouquets = (
-    select(Bouquet.name, Bouquet.description, Bouquet.short_desc, Bouquet.origin, Bouquet.meaning,Bouquet.image_link)
+query_bouquets = select(
+    Bouquet.name,
+    Bouquet.description,
+    Bouquet.short_desc,
+    Bouquet.origin,
+    Bouquet.meaning,
+    Bouquet.image_link,
 )
 
 all_flowers = db.execute(query_flowers).all()
@@ -24,24 +34,24 @@ all_bouquets = db.execute(query_bouquets).all()
 
 if search:
     all_flowers = [
-        (name, desc, short_desc, origin, meaning,image_link)
+        (name, desc, short_desc, origin, meaning, image_link)
         for name, desc, short_desc, origin, meaning, image_link in all_flowers
-        if search.lower() in name.lower() 
+        if search.lower() in name.lower()
         or search.lower() in desc.lower()
         or search.lower() in short_desc.lower()
         or search.lower() in origin.lower()
         or search.lower() in meaning.lower()
-        ]
+    ]
     all_bouquets = [
         (name, desc, short_desc, origin, meaning, image_link)
         for name, desc, short_desc, origin, meaning, image_link in all_bouquets
-        if search.lower() in name.lower() 
+        if search.lower() in name.lower()
         or search.lower() in desc.lower()
         or search.lower() in short_desc.lower()
         or search.lower() in origin.lower()
         or search.lower() in meaning.lower()
-        ]
-    #https://discuss.streamlit.io/t/how-to-create-a-search-field-for-the-app/36074/4
+    ]
+    # https://discuss.streamlit.io/t/how-to-create-a-search-field-for-the-app/36074/4
 
 st.header("Flowers")
 flowers = st.container(key="flowers")
@@ -54,10 +64,14 @@ with flowers:
         for i in range(4):
             flower_index = row * 4 + i
             if flower_index < num_flowers:
-                name, desc, short_desc, origin, meaning,image_link = all_flowers[flower_index]
+                name, desc, short_desc, origin, meaning, image_link = all_flowers[
+                    flower_index
+                ]
                 with col[i]:
-                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
-                    st.subheader(name)
+                    st.image(
+                        image_link, use_container_width=True
+                    )  # Replace with actual shop images
+                    st.subheader(name, anchor=False)
                     st.write(f"{meaning}")
                     st.write(f"{desc}")
                     st.write(f"{origin}")
@@ -73,10 +87,14 @@ with bouquets:
         for i in range(4):
             flower_index = row * 4 + i
             if flower_index < num_bouquets:
-                name, desc, short_desc, origin, meaning, image_link = all_bouquets[flower_index]
+                name, desc, short_desc, origin, meaning, image_link = all_bouquets[
+                    flower_index
+                ]
                 with col[i]:
-                    st.image(image_link, use_container_width=True)  # Replace with actual shop images
-                    st.subheader(name)
+                    st.image(
+                        image_link, use_container_width=True
+                    )  # Replace with actual shop images
+                    st.subheader(name, anchor=False)
                     st.write(f"{meaning}")
                     st.write(f"{desc}")
                     st.write(f"{origin}")
@@ -106,6 +124,13 @@ custom_css = """
         padding: 10px;
         border-radius: 5px;
         transition: background-color 0.3s;
+    }
+    img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    object-position: 20% 1;
     }
 </style>
 """

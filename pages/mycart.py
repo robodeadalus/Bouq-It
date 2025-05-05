@@ -131,14 +131,12 @@ if not flowers and not bouquets and not custom_bouquets:
 cart_contents = st.container()
 with cart_contents:
 
-    st.subheader("Your Cart Items")
+    st.subheader("Your Cart Items", anchor=False)
 
     edited_flowers = pd.DataFrame()
     edited_bouquets = pd.DataFrame()
     edited_custom = pd.DataFrame()
 
-    def get_total():
-        update_total(edited_flowers, edited_bouquets, edited_custom)
 
     if flowers:
         st.write("**Flowers**")
