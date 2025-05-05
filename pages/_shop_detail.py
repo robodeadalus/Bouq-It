@@ -26,7 +26,7 @@ with col2:
 
 st.divider()
 
-st.subheader("Available Flowers")
+st.subheader("Available Flowers", anchor=False)
 
 flower_query = (
     select(ShopFlower, Flower)
@@ -102,7 +102,7 @@ else:
                         finally:
                             st.toast(f"Added {qty} {flower.name} to cart")
 
-st.subheader("Available Bouquets")
+st.subheader("Available Bouquets", anchor=False)
 
 bouquet_query = (
     select(ShopBouquet, Bouquet)
